@@ -3,38 +3,42 @@ package agh.ics.oop;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Animal {
+public class Animal extends InputParameters {
     private Vector2d positionOnTheMap;
     private MapDirections orientation;
     private int timeLeftToDeath;
     private DNA genotype;
-    private ArrayList<Animal> kids;
-    private ArrayList<Animal> descendants;
+    private int numberOfKids;
+    private int numberOfDescendants;
     private int dayOfDeath;
+    Random random = new Random();
 
     // dodac jeszcze zwiaezraki po smierci i narodzniach ale to jak bedzie mapa,
     // dodac ruch do przodu jak ogarne mape
     // rozmnazanie dodac
+    // dodac sobie to ze adam i ewa nie moga pojawic sie na tym samym polu
 
 
-    public Animal(int timeLeftToDeath) {       // tworzenie adama i ewy
-        Random random = new Random();
+
+    public Animal() {       // tworzenie adama i ewy
         int x; int y;
-        x = random.nextInt(10);
-        y = random.nextInt(10);
+        x = random.nextInt(getWidth());
+        y = random.nextInt(getHeight());
         this.positionOnTheMap = new Vector2d(x, y);
-        this.orientation = MapDirections.EAST;
-        this.timeLeftToDeath = timeLeftToDeath;
+        this.orientation = MapDirections.getRandom();
+        this.timeLeftToDeath = getInitialEnergy();
         this.genotype = new DNA();
-        this.kids = new ArrayList<Animal>();
-        this.descendants = new ArrayList<Animal>();
+        this.numberOfKids = 0;
+        this.numberOfDescendants = 0;
     }
 
-    public Animal(Animal firstParent, Animal secondParent, int timeLeftToDeath){     // tworzenie dziecka
+    public Animal(Animal firstParent, Animal secondParent){     // tworzenie dziecka
         this.positionOnTheMap = new Vector2d(firstParent.positionOnTheMap.x, firstParent.positionOnTheMap.y);
-        this.orientation = MapDirections.NORTH;
-        this.timeLeftToDeath = timeLeftToDeath;
+        this.orientation = MapDirections.getRandom();
+        this.timeLeftToDeath = getInitialEnergy();
         this.genotype = new DNA(firstParent, secondParent);
+        this.numberOfKids = 0;
+        this.numberOfDescendants = 0;
     }
 
     public int getDayOfDeath(){
@@ -92,8 +96,20 @@ public class Animal {
     public void isDying(int day){       // dodac martwe zwierzaki
         if (this.timeLeftToDeath <= 0){
             this.death(day);
-
         }
+    }
+
+    public int getNumberOfKids(){
+        return this.numberOfKids;
+    }
+
+    public int getNumberOfDescendants(){
+        return this.numberOfDescendants;
+    }
+
+    public void madeNewBaby(){
+        this.numberOfKids += 1;
+        this.numberOfDescendants += 1;
     }
 
     public void death(int day){

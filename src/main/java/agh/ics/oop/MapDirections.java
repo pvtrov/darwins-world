@@ -10,6 +10,10 @@ public enum MapDirections {
     WEST,
     NORTHWEST;
 
+    public static MapDirections getRandom(){
+        return values()[(int) (Math.random() * values().length)];
+    }
+
     public MapDirections next(){
         return switch (this){
             case SOUTH -> SOUTHWEST;

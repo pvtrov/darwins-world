@@ -2,7 +2,7 @@ package agh.ics.oop;
 
 import java.util.Random;
 
-public class Plant {
+public class Plant extends InputParameters {
     public Vector2d position;
     public int kcal;
 
@@ -17,5 +17,11 @@ public class Plant {
 
     public Vector2d getPosition(){
         return this.position;
+    }
+
+    public String toString(){return "*";}
+
+    public boolean isOccupied(Vector2d position){
+        return objectAt(position) != null;
     }
 }

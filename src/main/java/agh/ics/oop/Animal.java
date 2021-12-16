@@ -7,7 +7,7 @@ public class Animal {
     private Vector2d positionOnTheMap;
     private MapDirections orientation;
     private int timeLeftToDeath;
-//    private final DNA genotype;
+    private DNA genotype;
     private ArrayList<Animal> kids;
     private ArrayList<Animal> descendants;
     private int dayOfDeath;
@@ -20,21 +20,21 @@ public class Animal {
     public Animal(int timeLeftToDeath) {       // tworzenie adama i ewy
         Random random = new Random();
         int x; int y;
-        x = random.nextInt();
-        y = random.nextInt();
+        x = random.nextInt(10);
+        y = random.nextInt(10);
         this.positionOnTheMap = new Vector2d(x, y);
         this.orientation = MapDirections.EAST;
         this.timeLeftToDeath = timeLeftToDeath;
-//        this.genotype = new DNA();
+        this.genotype = new DNA();
         this.kids = new ArrayList<Animal>();
         this.descendants = new ArrayList<Animal>();
     }
 
-    public Animal(Animal firstParent, Animal secondParent){     // tworzenie dziecka
+    public Animal(Animal firstParent, Animal secondParent, int timeLeftToDeath){     // tworzenie dziecka
         this.positionOnTheMap = new Vector2d(firstParent.positionOnTheMap.x, firstParent.positionOnTheMap.y);
         this.orientation = MapDirections.NORTH;
         this.timeLeftToDeath = timeLeftToDeath;
-//        this.genotype = new DNA(firstParent.genotype, secondParent.genotype);
+        this.genotype = new DNA(firstParent, secondParent);
     }
 
     public int getDayOfDeath(){
@@ -53,9 +53,9 @@ public class Animal {
         return this.timeLeftToDeath;
     }
 
-//    public DNA getGenotype(){
-//        return this.genotype;
-//    }
+    public DNA getGenotype(){
+        return this.genotype;
+    }
 
     public void move(int[] genes){
         for (int gene : genes){

@@ -1,17 +1,16 @@
 package agh.ics.oop;
 
+// trawa nie moze sie pojawic tam gdzie jest juz zwierze i inna trawa
+
 import java.util.Random;
 
 public class Plant extends InputParameters {
+    public MapField mapField;
     public Vector2d position;
     public int kcal;
 
-    public Plant(){     // sazdenie nowej trawy
-        Random random = new Random();
-        int x; int y;
-        x = random.nextInt();
-        y = random.nextInt();
-        this.position = new Vector2d(x, y);
+    public Plant(Vector2d position){     // sadzenie nowej trawy
+        this.position = position;
         this.kcal = kcal;
     }
 
@@ -21,7 +20,4 @@ public class Plant extends InputParameters {
 
     public String toString(){return "*";}
 
-    public boolean isOccupied(Vector2d position){
-        return objectAt(position) != null;
-    }
 }

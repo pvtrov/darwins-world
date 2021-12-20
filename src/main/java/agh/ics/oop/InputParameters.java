@@ -1,14 +1,16 @@
 package agh.ics.oop;
 
 public class InputParameters {
-    int height;
-    int width;
-    int initialEnergy;
-    int initialNumberOfAnimals;
-    int initialNumberOfPlants;
-    int lostEnergy;
-    int plantKcal;
+    int height = 10;
+    int width = 10;
+    int initialEnergy = 30;
+    int initialNumberOfAnimals = 3;
+    int initialNumberOfPlants = 4;
+    int lostEnergy = 2;
+    int plantKcal = 5;
     int jungleRatio;
+    int jungleHeight;
+    int jungleWidth;
 
     public int getHeight(){
         return height;
@@ -41,5 +43,6 @@ public class InputParameters {
     public int getJungleRatio(){
         return jungleRatio;
     }
+
 }
 

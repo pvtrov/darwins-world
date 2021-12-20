@@ -20,6 +20,7 @@ public class Animal extends InputParameters {
     // dodac ruch do przodu jak ogarne mape
     // dodac sobie to ze adam i ewa nie moga pojawic sie na tym samym polu
 
+
     // constructors
     public Animal(Vector2d positionOnTheMap) {       // tworzenie adama i ewy
         this.positionOnTheMap = positionOnTheMap;

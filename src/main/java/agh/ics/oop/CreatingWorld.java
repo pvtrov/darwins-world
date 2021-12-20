@@ -13,7 +13,7 @@ public class CreatingWorld extends InputParameters {
     Random random = new Random();
 
 
-    // gdy ogarne jungle to zmienic wymiary tego do drukowania
+    // todo gdy ogarne jungle to zmienic wymiary tego do drukowania
     public void placingPlantsAtTheBegin(){
         int x; int y;
 

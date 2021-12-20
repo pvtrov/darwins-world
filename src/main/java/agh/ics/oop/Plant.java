@@ -11,7 +11,7 @@ public class Plant extends InputParameters {
 
     public Plant(Vector2d position){     // sadzenie nowej trawy
         this.position = position;
-        this.kcal = kcal;
+        this.kcal = super.plantKcal;
     }
 
     public Vector2d getPosition(){

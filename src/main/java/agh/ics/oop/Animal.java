@@ -12,13 +12,13 @@ public class Animal extends InputParameters {
     private int timeLeftToDeath;
     private DNA genotype;
     private int numberOfKids;
-    private int numberOfDescendants;
-    private int dayOfDeath;
+    private int numberOfDescendants = 0;
+    private int dayOfDeath = 0;
     Random random = new Random();
 
-    // dodac jeszcze zwiaezraki po smierci i narodzniach ale to jak bedzie mapa,
-    // dodac ruch do przodu jak ogarne mape
-    // dodac sobie to ze adam i ewa nie moga pojawic sie na tym samym polu
+    // todo dodac jeszcze zwiaezraki po smierci i narodzniach ale to jak bedzie mapa,
+    // todo dodac ruch do przodu jak ogarne mape
+    // todo dodac sobie to ze adam i ewa nie moga pojawic sie na tym samym polu
 
 
     // constructors
@@ -27,8 +27,6 @@ public class Animal extends InputParameters {
         this.orientation = MapDirections.getRandom();
         this.timeLeftToDeath = getInitialEnergy();
         this.genotype = new DNA();
-        this.numberOfKids = 0;
-        this.numberOfDescendants = 0;
     }
 
     public Animal(Animal firstParent, Animal secondParent){     // tworzenie dziecka
@@ -36,8 +34,6 @@ public class Animal extends InputParameters {
         this.orientation = MapDirections.getRandom();
         this.timeLeftToDeath = firstParent.timeLeftToDeath/4 + secondParent.timeLeftToDeath/4;
         this.genotype = new DNA(firstParent, secondParent);
-        this.numberOfKids = 0;
-        this.numberOfDescendants = 0;
     }
 
 
@@ -96,7 +92,7 @@ public class Animal extends InputParameters {
         this.timeLeftToDeath = this.timeLeftToDeath + plant.kcal;
     }
 
-    public void isDying(int day){       // dodac martwe zwierzaki
+    public void isDying(int day){       // todo dodac martwe zwierzaki
         if (this.timeLeftToDeath <= 0){
             this.death(day);
         }

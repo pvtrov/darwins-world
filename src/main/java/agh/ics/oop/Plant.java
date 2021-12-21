@@ -2,16 +2,14 @@ package agh.ics.oop;
 
 // trawa nie moze sie pojawic tam gdzie jest juz zwierze i inna trawa
 
-import java.util.Random;
-
 public class Plant extends InputParameters {
-    public MapField mapField;
+    public Field field;
     public Vector2d position;
     public int kcal;
 
     public Plant(Vector2d position){     // sadzenie nowej trawy
         this.position = position;
-        this.kcal = super.plantKcal;
+        this.kcal = getPlantKcal();
     }
 
     public Vector2d getPosition(){

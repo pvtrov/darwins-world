@@ -1,17 +1,17 @@
 package agh.ics.oop;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.PriorityQueue;
-import java.util.Random;
-import agh.ics.oop.MapField;
+import java.util.*;
 
 public class CreatingWorld extends InputParameters {
-    public HashMap<Vector2d, Plant> plantsOnTheMap = new HashMap<>();
-    public LinkedHashMap<Vector2d, Animal> animalsOnTheMap = new LinkedHashMap<>();
-    public MapField mapField;
+    private World darwinWorld;
+    private List<Field> fields = new ArrayList<>();
     Random random = new Random();
 
+
+    public void createWorld(){
+        World darwinWorld = new World(getWidth(), getHeight(), getJungleWidth(), getJungleHeight());
+
+    }
 
     // todo gdy ogarne jungle to zmienic wymiary tego do drukowania
     public void placingPlantsAtTheBegin(){
@@ -21,9 +21,9 @@ public class CreatingWorld extends InputParameters {
             do {
                 x = random.nextInt(getWidth());
                 y = random.nextInt(getHeight());
-            }while (mapField.canPlacePlant(new Vector2d(x, y)));
+            }while (field.canPlacePlant(new Vector2d(x, y)));
             Plant plant = new Plant(new Vector2d(x, y));
-            plantsOnTheMap.put(plant.getPosition(), plant);
+            f.put(plant.getPosition(), plant);
         }
     }
 
@@ -34,7 +34,7 @@ public class CreatingWorld extends InputParameters {
             do {
                 x = random.nextInt(getWidth());
                 y = random.nextInt(getHeight());
-            }while (mapField.canPlaceAnimal(new Vector2d(x, y)));
+            }while (field.canPlaceAnimal(new Vector2d(x, y)));
             Animal animal = new Animal(new Vector2d(x, y));
             animalsOnTheMap.put(animal.getPositionOnTheMap(), animal);
         }

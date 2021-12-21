@@ -12,4 +12,8 @@ public class App  extends Application{
     public void start(Stage primaryStage) throws Exception {
         primaryStage.show();
     }
+
+    public static void main(String[] args) {
+        Application.launch(App.class, args);
+    }
 }

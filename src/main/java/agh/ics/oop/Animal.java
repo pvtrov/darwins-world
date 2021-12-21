@@ -64,6 +64,8 @@ public class Animal extends InputParameters {
             switch (gene) {
                 case 0:
                     Vector2d newPosition = this.positionOnTheMap.add(this.orientation.toUnitVector());
+                    Vector2d oldPosition = this.positionOnTheMap;
+                    positionChange(oldPosition, newPosition);
                 case 1:
                     this.orientation = this.orientation.next();
                     break;
@@ -74,8 +76,9 @@ public class Animal extends InputParameters {
                     this.orientation = this.orientation.next().next().next();
                     break;
                 case 4:
-                    Vector2d newPositionB = this.positionOnTheMap.subtract(this.orientation.toUnitVector());
-
+                    Vector2d newPositionB = this.positionOnTheMap.add(this.orientation.toUnitVector());
+                    Vector2d oldPositionB = this.positionOnTheMap;
+                    postionChange(oldPositionB, newPositionB);
                 case 5:
                     this.orientation = this.orientation.next().next().next().next().next();
                     break;

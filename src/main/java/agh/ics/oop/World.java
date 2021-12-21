@@ -6,9 +6,11 @@ import javafx.application.Application;
 
 import java.util.Arrays;
 
-public class World {
+public class World extends InputParameters {
 
-    public static void main(String[] args) {
-        Application.launch(App.class, args);
+    public World(int width, int height, int jungleWidth, int jungleHeight){
+        // todo tu zrobic tak zeby bylka mapka
+
     }
+
 }

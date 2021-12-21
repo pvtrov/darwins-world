@@ -8,7 +8,7 @@ public class InputParameters {
     int initialNumberOfPlants = 4;
     int lostEnergy = 2;
     int plantKcal = 5;
-    int jungleRatio;
+    int jungleRatio = 25;  // pobieram w procentach
     int jungleHeight;
     int jungleWidth;
 
@@ -44,5 +44,22 @@ public class InputParameters {
         return jungleRatio;
     }
 
+    public int getJungleHeight(){
+        return jungleCounting();
+    }
+
+    public int getJungleWidth(){
+        jungleHeight = jungleCounting();
+        return (jungleRatio*allFields/100) / jungleHeight;
+    }
+
+    int allFields; int jungleFields;
+    // oblicznie jungli
+    public int jungleCounting(){
+        allFields = height * width;  // b, a
+        jungleFields = jungleRatio*allFields/100;  // A
+        jungleHeight = (int) Math.sqrt(jungleFields*height/width);
+        return jungleHeight;
+    }
 }
 

@@ -60,39 +60,40 @@ public class Animal extends InputParameters {
 
     // living
     public void move(int[] genes){
-        for (int gene : genes){
-            switch (gene) {
-                case 0:
-                    Vector2d newPosition = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                    Vector2d oldPosition = this.positionOnTheMap;
-                    positionChange(oldPosition, newPosition);
-                case 1:
-                    this.orientation = this.orientation.next();
-                    break;
-                case 2:
-                    this.orientation = this.orientation.next().next();
-                    break;
-                case 3:
-                    this.orientation = this.orientation.next().next().next();
-                    break;
-                case 4:
-                    Vector2d newPositionB = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                    Vector2d oldPositionB = this.positionOnTheMap;
-                    postionChange(oldPositionB, newPositionB);
-                case 5:
-                    this.orientation = this.orientation.next().next().next().next().next();
-                    break;
-                case 6:
-                    this.orientation = this.orientation.next().next().next().next().next().next();
-                    break;
-                case 7:
-                    this.orientation = this.orientation.next().next().next().next().next().next().next();
-            }
+        int x = random.nextInt(32);
+        int gene = genes[x];
+        switch (gene) {
+            case 0:
+                Vector2d newPosition = this.positionOnTheMap.add(this.orientation.toUnitVector());
+                Vector2d oldPosition = this.positionOnTheMap;
+                positionChange(oldPosition, newPosition);
+            case 1:
+                this.orientation = this.orientation.next();
+                break;
+            case 2:
+                this.orientation = this.orientation.next().next();
+                break;
+            case 3:
+                this.orientation = this.orientation.next().next().next();
+                break;
+            case 4:
+                Vector2d newPositionB = this.positionOnTheMap.add(this.orientation.toUnitVector());
+                Vector2d oldPositionB = this.positionOnTheMap;
+                postionChange(oldPositionB, newPositionB);
+            case 5:
+                this.orientation = this.orientation.next().next().next().next().next();
+                break;
+            case 6:
+                this.orientation = this.orientation.next().next().next().next().next().next();
+                break;
+            case 7:
+                this.orientation = this.orientation.next().next().next().next().next().next().next();
         }
     }
 
-    public void eatingPlant(Plant plant){
-        this.timeLeftToDeath = this.timeLeftToDeath + plant.kcal;
+
+    public void eatingPlant(int kcal){
+        this.timeLeftToDeath = this.timeLeftToDeath + kcal;
     }
 
     public void isDying(int day){       // todo dodac martwe zwierzaki

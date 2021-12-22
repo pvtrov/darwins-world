@@ -14,37 +14,67 @@ public class CreatingWorld extends InputParameters {
     }
 
     // todo gdy ogarne jungle to zmienic wymiary tego do drukowania
-    public void placingPlantsAtTheBegin(){
-        int x; int y;
+    // todo zrobic usuwanie zwierzaokw
+    
+    public void removingDeadAnimal(Animal animal, Field field){
+        darwinWorld.animals.remove(animal.getPositionOnTheMap(), animal);
+        field.removingAnimals(animal);
+    }
 
-        for (int i = getInitialNumberOfPlants(); i > 0; i--){
-            do {
-                x = random.nextInt(getWidth());
-                y = random.nextInt(getHeight());
-            }while (field.canPlacePlant(new Vector2d(x, y)));
-            Plant plant = new Plant(new Vector2d(x, y));
-            f.put(plant.getPosition(), plant);
+    public void removingEatenPlant(Plant plant, Field field){
+        darwinWorld.plants.remove(plant.getPosition());
+        field.removingPlants();
+    }
+
+
+    public void isSomethingThere(Vector2d position) {    // getting position and checking if and what is there
+        int fieldAddress = darwinWorld.map.getFieldAddress(position);
+        Field field = fields.get(fieldAddress);
+
+        if (field.isPlantGrown && !field.animals.isEmpty()) {    // there are animals and plant
+            eatPlant(plantKcal, field, position);
+            if (field.animals.size() > 1) {
+                Animal mother = field.animals.poll();
+                Animal father = field.animals.poll();
+                if (mother.getTimeLeftToDeath() >= initialEnergy / 2 && father.getTimeLeftToDeath() >= initialEnergy / 2) {
+                    copulation(mother, father);
+                }
+        } else if (field.animals.size() > 1) {                     // there are animals and no plant
+            Animal mother = field.animals.poll();
+            Animal father = field.animals.poll();
+            if (mother.getTimeLeftToDeath() >= initialEnergy / 2 && father.getTimeLeftToDeath() >= initialEnergy / 2) {
+                copulation(mother, father);
+            }
+        }
         }
     }
 
-    public void placingAdamAndEva(){
-        int x; int y;
+    public void copulation(Animal mother, Animal father){
+        int fieldAddress = darwinWorld.map.getFieldAddress(mother.getPositionOnTheMap());
+        Field field = fields.get(fieldAddress);
 
-        for (int i = getInitialNumberOfAnimals(); i > 0; i--){
-            do {
-                x = random.nextInt(getWidth());
-                y = random.nextInt(getHeight());
-            }while (field.canPlaceAnimal(new Vector2d(x, y)));
-            Animal animal = new Animal(new Vector2d(x, y));
-            animalsOnTheMap.put(animal.getPositionOnTheMap(), animal);
+        Animal child = mother.makingNewBaby(father);
+        darwinWorld.animals.put(child.getPositionOnTheMap(), child);
+        field.addingAnimals(child);
+        field.addingAnimals(mother);
+        field.addingAnimals(father);
+    }
+
+    public void eatPlant(int plantKcal, Field field, Vector2d position){
+        Plant plant = darwinWorld.plants.get(position);
+        Animal[] animalsAsAList = (Animal[]) field.animals.toArray();
+        int counter = 1;
+        int index = 0;
+        while (animalsAsAList[index].getTimeLeftToDeath() == animalsAsAList[index+1].getTimeLeftToDeath()){
+            counter += 1;
+            index += 1;
         }
-    }
-
-    public void removingDeadAnimal(Animal animal){
-        animalsOnTheMap.remove(animal.getPositionOnTheMap(), animal);
-    }
-
-    public void removingEatenPlant(Plant plant){
-        plantsOnTheMap.remove(plant.getPosition());
+        int kcalForOneAnimal = plantKcal/counter;
+        int indexSnd = 0;
+        while (counter > 0) {
+            animalsAsAList[indexSnd].eatingPlant(kcalForOneAnimal);
+            counter --;
+        }
+        removingEatenPlant(plant, field);
     }
 }

@@ -3,10 +3,10 @@ package agh.ics.oop;
 public class InputParameters {
     int height = 10;
     int width = 10;
-    int initialEnergy = 30;
+    int startEnergy = 30;
     int initialNumberOfAnimals = 3;
     int initialNumberOfPlants = 4;
-    int lostEnergy = 2;
+    int moveEnergy = 2;
     int plantKcal = 5;
     int jungleRatio = 25;  // pobieram w procentach
     int jungleHeight;
@@ -20,8 +20,8 @@ public class InputParameters {
         return width;
     }
 
-    public int getInitialEnergy(){
-        return initialEnergy;
+    public int getStartEnergy(){
+        return startEnergy;
     }
 
     public int getInitialNumberOfAnimals(){
@@ -32,8 +32,8 @@ public class InputParameters {
         return initialNumberOfPlants;
     }
 
-    public int getLostEnergy(){
-        return lostEnergy;
+    public int getMoveEnergy(){
+        return moveEnergy;
     }
 
     public int getPlantKcal(){

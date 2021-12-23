@@ -3,14 +3,13 @@ package agh.ics.oop;
 // tutaj sprawdzam co jest na danym polu, i skierowywuje do odpoweidnich dzialan
 
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.PriorityQueue;
 
 public class Field implements IWorldMap{
-    private Vector2d fieldAddress;
+    public Vector2d fieldAddress;
     public boolean isPlantGrown = false;
-    public PriorityQueue<Animal> animals = new PriorityQueue<>((x, y) -> x.getTimeLeftToDeath() > y.getTimeLeftToDeath() ? 1 : -1);
+    public boolean isJungle = false;
+    public PriorityQueue<Animal> animals = new PriorityQueue<>((x, y) -> x.getEnergy() > y.getEnergy() ? 1 : -1);
 
 
     public void addingPlants(){
@@ -21,7 +20,8 @@ public class Field implements IWorldMap{
         isPlantGrown = false;
     }
 
-    public Field(Vector2d fieldAddress, boolean isPlantGrown) {
+    public Field(Vector2d fieldAddress, boolean isPlantGrown, boolean isJungle) {
+        this.isJungle = isJungle;
         this.fieldAddress = fieldAddress;
         this.isPlantGrown = isPlantGrown;
     }
@@ -35,17 +35,17 @@ public class Field implements IWorldMap{
     }
 
     @Override
-    public boolean canPlacePlant(Vector2d position) {
-        return false;
+    public boolean canPlacePlant(Vector2d fieldAddress) {
+        return isPlantGrown == false && animals.isEmpty();
     }
 
     @Override
-    public boolean canPlaceAnimal(Vector2d position) {
-        return false;
+    public boolean canPlaceAnimal(Vector2d fieldAddress) {
+        return animals.isEmpty();
     }
 
     @Override
-    public boolean isOccupied(Vector2d position) {
-        return false;
+    public boolean isOccupied(Vector2d fieldAddress) {
+        return !animals.isEmpty();
     }
 }

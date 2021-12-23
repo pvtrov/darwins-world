@@ -33,12 +33,12 @@ public class DNA {
         Random random = new Random();
         int[] tempGenotype = new int[32];
         float all;
-        all = firstParent.getTimeLeftToDeath() + secondParent.getTimeLeftToDeath();
-        float firstParentShares = firstParent.getTimeLeftToDeath()/all;
+        all = firstParent.getEnergy() + secondParent.getEnergy();
+        float firstParentShares = firstParent.getEnergy()/all;
         float firstParentRange = 32 * firstParentShares;
         int side = random.nextInt(2); // 0 -> lewa, 1 -> prawa
 
-        if (firstParent.getTimeLeftToDeath() > firstParent.getTimeLeftToDeath() && side == 0){
+        if (firstParent.getEnergy() > firstParent.getEnergy() && side == 0){
             for (int i = 0; i < firstParentRange; i++){
                 DNA firstParentGenotype = firstParent.getGenotype();
                 int[] firstParentIntGenotype = firstParentGenotype.getIntGenotype();
@@ -49,7 +49,7 @@ public class DNA {
                 int[] secondParentIntGenotype = secondParentGenotype.getIntGenotype();
                 tempGenotype[i] = secondParentIntGenotype[i];
             }
-        }else if (firstParent.getTimeLeftToDeath() == secondParent.getTimeLeftToDeath()) {
+        }else if (firstParent.getEnergy() == secondParent.getEnergy()) {
             for (int i = 0; i < 16; i++) {
                 DNA firstParentGenotype = firstParent.getGenotype();
                 int[] firstParentIntGenotype = firstParentGenotype.getIntGenotype();

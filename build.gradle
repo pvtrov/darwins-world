@@ -12,7 +12,6 @@ repositories {
 }
 
 application {
-    mainModule = 'agh.ics.oop.gui'
     mainClass = 'agh.ics.oop.gui.App'
 }
 

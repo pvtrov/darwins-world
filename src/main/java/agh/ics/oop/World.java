@@ -1,62 +1,97 @@
 package agh.ics.oop;
 
 
-import agh.ics.oop.gui.App;
-import javafx.application.Application;
-
 import java.util.*;
 
-public class World extends InputParameters {
+public class World extends InputParameters implements IPositionChangeObserever{
     Random random = new Random();
-    public LinkedHashMap<Vector2d, Animal> animals;
-    public HashMap<Vector2d, Plant> plants;
+    public LinkedHashMap<Vector2d, Animal> animals = new LinkedHashMap<>();
+    public HashMap<Vector2d, Plant> plants = new HashMap<>();
     public WorldMap map;
-    public ArrayList<Field> fields = new ArrayList<>();
+    public HashMap<Vector2d, Field> fields = new HashMap<>(getHeight()*getWidth());
+    public ArrayList<Animal> deadAnimals = new ArrayList<>();
+    public ArrayList<Vector2d> fieldsForPlantsJungle = new ArrayList<>();
+    public ArrayList<Vector2d> fieldsForPlantsSavanna = new ArrayList<>();
+    public ArrayList<Vector2d> fieldsForAnimals = new ArrayList<>();
 
 
-    public World(int width, int height, int jungleWidth, int jungleHeight){
-        // todo tu zrobic tak zeby bylka mapka
-        createMap();
-        placingPlantsAtTheBegin();
-        placingAdamAndEva();
-
-
+    public World(){
+        this.map = new WorldMap(getWidth(), getHeight(), getJungleWidth(), getJungleHeight());
+        makingFieldsArrays();
+        this.placingPlantsAtTheBegin();
+        this.placingAdamAndEva();
     }
 
-    private void createMap(){
+
+    public void makingFieldsArrays(){
+        Vector2d jungleLowerLeft = map.jungleCountingLowerLeft();
+        Vector2d jungleUpperRight = map.jungleCountingUpperRight();
+        for (int i = 0; i < getWidth(); i++) {
+            for (int j = 0; j < getHeight(); j++) {
+                Vector2d vector = new Vector2d(i, j);
+                if (vector.precedes(jungleLowerLeft) && vector.follows(jungleUpperRight)) {
+                    fields.put(new Vector2d(i, j), new Field(new Vector2d(i, j), false, true));
+                    fieldsForPlantsJungle.add(vector);
+                } else {
+                    fields.put(new Vector2d(i, j), new Field(new Vector2d(i, j), false, false));
+                    fieldsForPlantsSavanna.add(vector);
+                }
+                fieldsForAnimals.add(vector);
+            }
+        }
     }
-    // todo zmienic rozstawianie animali
+
     public void placingPlantsAtTheBegin(){
-        int x; int y;
-        for (int i = getInitialNumberOfPlants(); i > 0; i--){
-            Field field;
-            do {
-                x = random.nextInt(getWidth());
-                y = random.nextInt(getHeight());
-                int fieldAddress = map.getFieldAddress(new Vector2d(x, y));
-                field = fields.get(fieldAddress-1);
-            }while (field.canPlacePlant(new Vector2d(x, y)));
-            Plant plant = new Plant(new Vector2d(x, y));
-            field.addingPlants();
-            plants.put(plant.getPosition(), plant);
+        int numberOfPlantsToJungle = getInitialNumberOfPlants()/2;
+        int numberOfPlantsToSavanna = getInitialNumberOfPlants()/2;
+
+        while (numberOfPlantsToJungle > 0){
+            int x = random.nextInt(fieldsForPlantsJungle.size());
+            Vector2d fieldAddress = fieldsForPlantsJungle.get(x);
+            Field field = fields.get(fieldAddress);
+            if (field.canPlacePlant(fieldAddress)){
+                Plant plant = new Plant(fieldAddress, true);
+                field.addingPlants();
+                plants.put(plant.getPosition(), plant);
+                fieldsForPlantsJungle.remove(fieldAddress);
+                numberOfPlantsToJungle --;
+            }
+        }
+        while (numberOfPlantsToSavanna > 0) {
+            int x = random.nextInt(fieldsForPlantsSavanna.size());
+            Vector2d fieldAddress = fieldsForPlantsSavanna.get(x);
+            Field field = fields.get(fieldAddress);
+            if (field.canPlacePlant(fieldAddress)) {
+                Plant plant = new Plant(fieldAddress, false);
+                field.addingPlants();
+                plants.put(plant.getPosition(), plant);
+                fieldsForPlantsSavanna.remove(fieldAddress);
+                numberOfPlantsToSavanna--;
+            }
         }
     }
 
     public void placingAdamAndEva(){
-        int x; int y;
-        for (int i = getInitialNumberOfAnimals(); i > 0; i--){
-            Field field;
-            do {
-                x = random.nextInt(getWidth());
-                y = random.nextInt(getHeight());
-                int fieldAddress = map.getFieldAddress(new Vector2d(x, y));
-                field = fields.get(fieldAddress-1);
-            }while (field.canPlaceAnimal(new Vector2d(x, y)));
-            Animal animal = new Animal(new Vector2d(x, y));
-            field.addingAnimals(animal);
-            animals.put(animal.getPositionOnTheMap(), animal);
+        int numberOfAnimal = getInitialNumberOfAnimals();
+        while (numberOfAnimal > 0){
+            int x = random.nextInt(fields.size());
+            Vector2d fieldAddress = fieldsForAnimals.get(x);
+            Field field = fields.get(fieldAddress);
+            if (field.canPlaceAnimal(fieldAddress)){
+                Animal animal = new Animal(fieldAddress);
+                field.addingAnimals(animal);
+                animals.put(fieldAddress, animal);
+                fieldsForAnimals.remove(fieldAddress);
+                numberOfAnimal --;
+            }
         }
     }
 
 
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        Animal movedAnimal = animals.get(oldPosition);
+        animals.remove(oldPosition, movedAnimal);
+        animals.put(newPosition, movedAnimal);
+    }
 }

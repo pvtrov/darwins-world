@@ -6,11 +6,39 @@ public class WorldMap extends InputParameters{
     int jungleWidth;
     int jungleHeight;
 
+    public WorldMap(int width, int height, int jungleHeight, int jungleWidth){
+        this.width = width;
+        this.height = height;
+        this.jungleHeight = jungleHeight;
+        this.jungleWidth = jungleWidth;
+    }
 
+    public Vector2d getMapUpperRight(){
+        return new Vector2d(width-1, height-1);
+    }
 
+    public int getJungleFirstX(){
+        Vector2d lowerLeft = jungleCountingLowerLeft();
+        return lowerLeft.x;
+    }
+
+    public int getJungleFirstY(){
+        Vector2d lowerLeft = jungleCountingLowerLeft();
+        return lowerLeft.y;
+    }
+
+    public int getJungleSecondX(){
+        Vector2d upperRight = jungleCountingUpperRight();
+        return upperRight.x;
+    }
+
+    public int getJungleSecondY() {
+        Vector2d upperRight = jungleCountingUpperRight();
+        return upperRight.y;
+    }
 
     // counting where jungle should be
-    private Vector2d jungleCountingLowerLeft(){
+    public Vector2d jungleCountingLowerLeft(){
         int middleXmap = width / 2;
         int middleYmap = height / 2;
         int halfOfJungleX = jungleWidth / 2;
@@ -19,7 +47,7 @@ public class WorldMap extends InputParameters{
         return new Vector2d(middleXmap-halfOfJungleX, middleYmap - halfOfJungleY);
     }
 
-    private Vector2d jungleCountingUpperRight(){
+    public Vector2d jungleCountingUpperRight(){
         int middleXmap = width / 2;
         int middleYmap = height / 2;
         int halfOfJungleX = jungleWidth / 2;

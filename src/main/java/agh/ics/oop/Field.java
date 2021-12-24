@@ -30,6 +30,11 @@ public class Field implements IWorldMap{
         animals.add(animal);
     }
 
+
+    public boolean isEmpty(){
+        return isPlantGrown == false && animals.isEmpty();
+    }
+
     public void removingAnimals(Animal animal){
         animals.remove(animal);
     }

@@ -6,7 +6,7 @@ package agh.ics.oop;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Animal extends InputParameters {
+public class Animal extends InputParameters implements IPositionChangeObserver, IMapElement{
     private Vector2d positionOnTheMap;
     private MapDirections orientation;
     private int energy;
@@ -15,11 +15,11 @@ public class Animal extends InputParameters {
     private int numberOfDescendants = 0;
     private int dayOfDeath = 0;
     Random random = new Random();
-    private ArrayList<IPositionChangeObserever> observers;
+    private ArrayList<IPositionChangeObserver> observers;
 
 
     // constructors
-    public Animal(Vector2d positionOnTheMap) {       // tworzenie adama i ewy
+    public Animal(Vector2d positionOnTheMap) {       // creating Adam and Eve
         this.positionOnTheMap = positionOnTheMap;
         this.orientation = MapDirections.getRandom();
         this.energy = getStartEnergy();
@@ -27,7 +27,7 @@ public class Animal extends InputParameters {
         this.observers = new ArrayList<>();
     }
 
-    public Animal(Animal firstParent, Animal secondParent){     // tworzenie dziecka
+    public Animal(Animal firstParent, Animal secondParent){     // creating new child
         this.positionOnTheMap = new Vector2d(firstParent.positionOnTheMap.x, firstParent.positionOnTheMap.y);
         this.orientation = MapDirections.getRandom();
         this.energy = firstParent.energy /4 + secondParent.energy /4;
@@ -41,7 +41,7 @@ public class Animal extends InputParameters {
         return this.orientation;
     }
 
-
+    @Override
     public Vector2d getPositionOnTheMap(){
         return this.positionOnTheMap;
     }
@@ -64,8 +64,12 @@ public class Animal extends InputParameters {
         switch (gene) {
             case 0:
                 Vector2d newPosition = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                Vector2d oldPosition = this.positionOnTheMap;
-                positionChange(oldPosition, newPosition);
+                if (newPosition.precedes(new Vector2d(0, 0)) && newPosition.follows(new Vector2d(getWidth(), getHeight()))){
+                    Vector2d oldPosition = this.positionOnTheMap;
+                    this.positionOnTheMap = newPosition;
+                    positionChange(oldPosition, newPosition);
+                    break;
+                }
             case 1:
                 this.orientation = this.orientation.next();
                 break;
@@ -77,8 +81,12 @@ public class Animal extends InputParameters {
                 break;
             case 4:
                 Vector2d newPositionB = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                Vector2d oldPositionB = this.positionOnTheMap;
-                positionChange(oldPositionB, newPositionB);
+                if (newPositionB.precedes(new Vector2d(0, 0)) && newPositionB.follows(new Vector2d(getWidth(), getHeight()))){
+                    Vector2d oldPosition = this.positionOnTheMap;
+                    this.positionOnTheMap = newPositionB;
+                    positionChange(oldPosition, newPositionB);
+                    break;
+                }
             case 5:
                 this.orientation = this.orientation.next().next().next().next().next();
                 break;
@@ -95,7 +103,7 @@ public class Animal extends InputParameters {
         this.energy = this.energy + kcal;
     }
 
-    public boolean isDying(){      // animal will die anyway after move if his energy is less than lostenergy
+    public boolean isDying(){      // animal will die anyway after move if his energy is less than moveEnergy
         return this.energy < moveEnergy;
     }
 
@@ -117,12 +125,16 @@ public class Animal extends InputParameters {
         return child;
     }
 
+    public void loseEnergy(){
+        this.energy = this.energy - moveEnergy;
+    }
+
     // for observers
-    public void addObserver(IPositionChangeObserever observer){
+    public void addObserver(IPositionChangeObserver observer){
         this.observers.add(observer);
     }
 
-    public void removeObserver(IPositionChangeObserever observer){
+    public void removeObserver(IPositionChangeObserver observer){
         this.observers.remove(observer);
     }
 
@@ -144,4 +156,37 @@ public class Animal extends InputParameters {
     }
 
 
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+
+    }
+
+    @Override
+    public String getPath() {
+        int initialEnergy = getStartEnergy();
+        int zero = 0;
+        int twenty = initialEnergy / 5;
+        int forty = 2 * initialEnergy / 5;
+        int sixty = 3 * initialEnergy / 5;
+        int eighty = 4 * initialEnergy / 5;
+
+        Animal animal = (Animal) this;
+        int energyLevel = animal.getEnergy();
+        try {
+            if (zero <= energyLevel && energyLevel <= twenty) {
+                return "src/main/resources/panda_0-20.png";
+            } else if (twenty < energyLevel && energyLevel <= forty) {
+                return "src/main/resources/panda_21-40.png";
+            } else if (forty < energyLevel && energyLevel <= sixty) {
+                return "src/main/resources/panda_41-60.png";
+            } else if (sixty < energyLevel && energyLevel <= eighty) {
+                return "src/main/resources/panda_61-80.png";
+            } else if (eighty < energyLevel && energyLevel <= initialEnergy) {
+                return "src/main/resources/panda_81-100.png";
+            }
+        }catch (Exception exception){
+            return "there is a problem with animal color";
+        }
+        return "";
+    }
 }

@@ -3,8 +3,9 @@ package agh.ics.oop;
 
 import java.util.*;
 
-public class World extends InputParameters implements IPositionChangeObserever{
+public class World extends InputParameters implements IPositionChangeObserver {
     Random random = new Random();
+    public ArrayList<IMapElement> mapElements = new ArrayList<>();
     public LinkedHashMap<Vector2d, Animal> animals = new LinkedHashMap<>();
     public HashMap<Vector2d, Plant> plants = new HashMap<>();
     public WorldMap map;
@@ -20,6 +21,10 @@ public class World extends InputParameters implements IPositionChangeObserever{
         makingFieldsArrays();
         this.placingPlantsAtTheBegin();
         this.placingAdamAndEva();
+    }
+
+    public ArrayList<IMapElement> getMapElements(){
+        return mapElements;
     }
 
 
@@ -54,6 +59,7 @@ public class World extends InputParameters implements IPositionChangeObserever{
                 field.addingPlants();
                 plants.put(plant.getPosition(), plant);
                 fieldsForPlantsJungle.remove(fieldAddress);
+                mapElements.add(plant);
                 numberOfPlantsToJungle --;
             }
         }
@@ -66,6 +72,7 @@ public class World extends InputParameters implements IPositionChangeObserever{
                 field.addingPlants();
                 plants.put(plant.getPosition(), plant);
                 fieldsForPlantsSavanna.remove(fieldAddress);
+                mapElements.add(plant);
                 numberOfPlantsToSavanna--;
             }
         }
@@ -79,9 +86,11 @@ public class World extends InputParameters implements IPositionChangeObserever{
             Field field = fields.get(fieldAddress);
             if (field.canPlaceAnimal(fieldAddress)){
                 Animal animal = new Animal(fieldAddress);
+                animal.addObserver(this);
                 field.addingAnimals(animal);
                 animals.put(fieldAddress, animal);
                 fieldsForAnimals.remove(fieldAddress);
+                mapElements.add(animal);
                 numberOfAnimal --;
             }
         }
@@ -93,5 +102,9 @@ public class World extends InputParameters implements IPositionChangeObserever{
         Animal movedAnimal = animals.get(oldPosition);
         animals.remove(oldPosition, movedAnimal);
         animals.put(newPosition, movedAnimal);
+        Field fieldToRemove = fields.get(oldPosition);
+        fieldToRemove.animals.remove(movedAnimal);
+        Field fieldToAdd = fields.get(newPosition);
+        fieldToAdd.animals.add(movedAnimal);
     }
 }

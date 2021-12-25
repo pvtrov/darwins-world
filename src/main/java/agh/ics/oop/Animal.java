@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Animal extends InputParameters implements IPositionChangeObserver, IMapElement{
+    private Vector2d oldPosition;
     private Vector2d positionOnTheMap;
     private MapDirections orientation;
     private int energy;
@@ -25,6 +26,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
         this.energy = getStartEnergy();
         this.genotype = new DNA();
         this.observers = new ArrayList<>();
+        this.oldPosition = null;
     }
 
     public Animal(Animal firstParent, Animal secondParent){     // creating new child
@@ -33,6 +35,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
         this.energy = firstParent.energy /4 + secondParent.energy /4;
         this.genotype = new DNA(firstParent, secondParent);
         this.observers = new ArrayList<>();
+        this.oldPosition = null;
     }
 
 
@@ -56,6 +59,10 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
         return this.genotype;
     }
 
+    public Vector2d getOldPosition(){
+        return this.oldPosition;
+    }
+
 
     // living
     public void move(int[] genes){
@@ -64,8 +71,9 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
         switch (gene) {
             case 0:
                 Vector2d newPosition = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                if (newPosition.precedes(new Vector2d(0, 0)) && newPosition.follows(new Vector2d(getWidth(), getHeight()))){
+                if (newPosition.precedes(new Vector2d(1, 1)) && newPosition.follows(new Vector2d(getWidth()-1, getHeight()-1))){
                     Vector2d oldPosition = this.positionOnTheMap;
+                    this.oldPosition = oldPosition;
                     this.positionOnTheMap = newPosition;
                     positionChange(oldPosition, newPosition);
                     break;
@@ -81,8 +89,9 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
                 break;
             case 4:
                 Vector2d newPositionB = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                if (newPositionB.precedes(new Vector2d(0, 0)) && newPositionB.follows(new Vector2d(getWidth(), getHeight()))){
+                if (newPositionB.precedes(new Vector2d(1, 1)) && newPositionB.follows(new Vector2d(getWidth()-1, getHeight()-1))){
                     Vector2d oldPosition = this.positionOnTheMap;
+                    this.oldPosition = oldPosition;
                     this.positionOnTheMap = newPositionB;
                     positionChange(oldPosition, newPositionB);
                     break;

@@ -21,7 +21,7 @@ public class Plant extends InputParameters implements IMapElement{
 
     @Override
     public String getPath() {
-        return "src/main/resources/plant.jpg";
+        return "src/main/resources/bambus.png";
     }
 
     @Override

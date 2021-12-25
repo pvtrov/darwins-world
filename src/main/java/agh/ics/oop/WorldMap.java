@@ -55,10 +55,4 @@ public class WorldMap extends InputParameters{
 
         return new Vector2d(middleXmap+halfOfJungleX, middleYmap+halfOfJungleY);
     }
-
-    // counting which field is which
-    public int getFieldAddress(Vector2d position){
-        int a = position.x; int b = position.y;
-        return (height-(b+1))*width + (a+1);
-    }
 }

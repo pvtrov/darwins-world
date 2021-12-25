@@ -50,8 +50,8 @@ public class App extends Application{
         System.out.println("cos2");
         int moveDelay = 500;
         world = new World();
-        map = new WorldMap(5, 5, 2, 2);
-        engine = new CreatingWorld(map,  moveDelay);
+        map = new WorldMap(world.map.getWidth(), world.map.getHeight(), world.map.getJungleHeight(), world.map.getJungleWidth());
+        engine = new CreatingWorld(map, world, moveDelay);
         System.out.println("ygy");
         Thread engineThread = new Thread(engine);
 
@@ -118,12 +118,12 @@ public class App extends Application{
             if (field.isJungle) {
                 return ("src/main/resources/jungle.png");
             }else{
-                return "src/main/resources/savanna.jpg";
+                return "src/main/resources/savanna.png";
             }
         }else{
             if (field.animals.isEmpty()){
                 return world.plants.get(field.fieldAddress).getPath();
-            }else return world.animals.get(field.fieldAddress).getPath();
+            }else return field.animals.peek().getPath();
         }
     }
 }

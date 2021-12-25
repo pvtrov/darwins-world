@@ -17,6 +17,7 @@ package agh.ics.oop;
 
 import agh.ics.oop.gui.App;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
@@ -26,14 +27,19 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
     private World darwinWorld;
     private App application;
     private int moveDaily;
-    private LinkedHashMap<Vector2d, Animal> animals;
+    private ArrayList<Animal> animals;
+    private int day = 1;
 
 
-    public CreatingWorld(WorldMap map, int moveDaily){
-        this.darwinWorld = new World();
+    public CreatingWorld(WorldMap map, World world, int moveDaily){
+        this.darwinWorld = world;
         this.map = darwinWorld.map;
         this.moveDaily = moveDaily;
         this.animals = darwinWorld.animals;
+    }
+
+    public int countDay(int day){
+        return day += 1;
     }
 
     public void day(){
@@ -46,6 +52,8 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
         movingAnimals();
         checkingWhatOnFieldsIs();
         growingPlants();
+        day = countDay(day);
+        System.out.println(day);
     }
 
     public void growingPlants(){
@@ -86,7 +94,7 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
     }
 
     public void checkingForDeadAnimals(){
-        for (Animal animal : animals.values()){
+        for (Animal animal : animals){
             if(animal.isDying()){
                 removingDeadAnimal(animal);
             }
@@ -94,10 +102,9 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
     }
 
     public void removingDeadAnimal(Animal animal){
-        int fieldAddress = darwinWorld.map.getFieldAddress(animal.getPositionOnTheMap());
         animal.removeObserver(darwinWorld);
-        Field field = darwinWorld.fields.get(fieldAddress);
-        darwinWorld.animals.remove(animal.getPositionOnTheMap(), animal);
+        Field field = darwinWorld.fields.get(animal.getPositionOnTheMap());
+        darwinWorld.animals.remove(animal);
         field.removingAnimals(animal);
         darwinWorld.mapElements.remove(animal);
         darwinWorld.deadAnimals.add(animal);
@@ -134,40 +141,32 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
     }
 
     public void copulation(Animal mother, Animal father){
-        int fieldAddress = darwinWorld.map.getFieldAddress(mother.getPositionOnTheMap());
-        Field field = darwinWorld.fields.get(fieldAddress);
+        Field field = darwinWorld.fields.get(mother.getPositionOnTheMap());
 
         Animal child = mother.makingNewBaby(father);
         child.addObserver(darwinWorld);
-        darwinWorld.animals.put(child.getPositionOnTheMap(), child);
+        darwinWorld.animals.add(child);
         darwinWorld.mapElements.add(child);
         field.addingAnimals(child);
         field.addingAnimals(mother);
         field.addingAnimals(father);
     }
 
-
+    // todo zmienic tra funckej bo kest do duopy
     public void eatPlant(int plantKcal, Field field, Vector2d position){
         Plant plant = darwinWorld.plants.get(position);
-        Animal[] animalsAsAList = (Animal[]) field.animals.toArray();
-        int counter = 1;
-        int index = 0;
-        while (animalsAsAList[index].getEnergy() == animalsAsAList[index+1].getEnergy()){
-            counter += 1;
-            index += 1;
-        }
-        int kcalForOneAnimal = plantKcal/counter;
-        int indexSnd = 0;
-        while (counter > 0) {
-            animalsAsAList[indexSnd].eatingPlant(kcalForOneAnimal);
-            counter --;
+        ArrayList<Animal> eatingAnimals = makeArray(field);
+        int numberOfAnimals = eatingAnimals.size();
+        int kcalForAnimal = plantKcal/numberOfAnimals;
+        for (Animal animal : eatingAnimals){
+            animal.eatingPlant(kcalForAnimal);
         }
         removingEatenPlant(plant, field);
     }
 
 
     public void movingAnimals(){
-        for (Animal animal : animals.values()){
+        for (Animal animal : animals){
             animal.move(animal.getGenotype().getIntGenotype());
             animal.loseEnergy();
         }
@@ -178,5 +177,19 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
         while (true){
             day();
         }
+    }
+
+    private ArrayList<Animal> makeArray(Field field){
+        ArrayList<Animal> animalsWhichWillEatThePlant = new ArrayList<>();
+        Animal firstAnimal = field.animals.poll();
+        animalsWhichWillEatThePlant.add(firstAnimal);
+        while (!field.animals.isEmpty() && field.animals.peek().getEnergy() != firstAnimal.getEnergy()){
+            firstAnimal = field.animals.poll();
+            animalsWhichWillEatThePlant.add(firstAnimal);
+        }
+        for (Animal animal : animalsWhichWillEatThePlant){
+            field.animals.add(animal);
+        }
+        return animalsWhichWillEatThePlant;
     }
 }

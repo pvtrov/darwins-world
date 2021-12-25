@@ -6,7 +6,7 @@ import java.util.*;
 public class World extends InputParameters implements IPositionChangeObserver {
     Random random = new Random();
     public ArrayList<IMapElement> mapElements = new ArrayList<>();
-    public LinkedHashMap<Vector2d, Animal> animals = new LinkedHashMap<>();
+    public ArrayList<Animal> animals = new ArrayList<>();
     public HashMap<Vector2d, Plant> plants = new HashMap<>();
     public WorldMap map;
     public HashMap<Vector2d, Field> fields = new HashMap<>(getHeight()*getWidth());
@@ -31,8 +31,8 @@ public class World extends InputParameters implements IPositionChangeObserver {
     public void makingFieldsArrays(){
         Vector2d jungleLowerLeft = map.jungleCountingLowerLeft();
         Vector2d jungleUpperRight = map.jungleCountingUpperRight();
-        for (int i = 0; i < getWidth(); i++) {
-            for (int j = 0; j < getHeight(); j++) {
+        for (int i = 1; i < getWidth(); i++) {
+            for (int j = 1; j < getHeight(); j++) {
                 Vector2d vector = new Vector2d(i, j);
                 if (vector.precedes(jungleLowerLeft) && vector.follows(jungleUpperRight)) {
                     fields.put(new Vector2d(i, j), new Field(new Vector2d(i, j), false, true));
@@ -88,7 +88,7 @@ public class World extends InputParameters implements IPositionChangeObserver {
                 Animal animal = new Animal(fieldAddress);
                 animal.addObserver(this);
                 field.addingAnimals(animal);
-                animals.put(fieldAddress, animal);
+                animals.add(animal);
                 fieldsForAnimals.remove(fieldAddress);
                 mapElements.add(animal);
                 numberOfAnimal --;
@@ -99,9 +99,15 @@ public class World extends InputParameters implements IPositionChangeObserver {
 
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
-        Animal movedAnimal = animals.get(oldPosition);
-        animals.remove(oldPosition, movedAnimal);
-        animals.put(newPosition, movedAnimal);
+        Animal movedAnimal = null;
+        for(Animal animal : animals){
+            if (animal.getOldPosition() == oldPosition && animal.getPositionOnTheMap() == newPosition){
+                movedAnimal = animal;
+                break;
+            }
+        }
+//        animals.remove(movedAnimal);
+//        animals.add(movedAnimal);
         Field fieldToRemove = fields.get(oldPosition);
         fieldToRemove.animals.remove(movedAnimal);
         Field fieldToAdd = fields.get(newPosition);

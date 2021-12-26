@@ -4,6 +4,7 @@ package agh.ics.oop;
 // wtedy zachodzą odpowiednie operacje
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Animal extends InputParameters implements IPositionChangeObserver, IMapElement{
@@ -121,7 +122,6 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
         this.numberOfDescendants += 1;
     }
 
-
     public void death(int day){
         this.dayOfDeath = day;
     }
@@ -152,16 +152,20 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
     }
 
     // to statistics
-    public int getNumberOfKids(){
-        return this.numberOfKids;
+    public String getNumberOfKids(){
+        return String.valueOf(this.numberOfKids);
     }
 
-    public int getNumberOfDescendants(){
-        return this.numberOfDescendants;
+    public String getGenotypeToStatistic(){
+        return Arrays.toString(this.genotype.getIntGenotype());
     }
 
-    public int getDayOfDeath(){
-        return this.dayOfDeath;
+    public String getNumberOfDescendants(){
+        return String.valueOf(this.numberOfDescendants);
+    }
+
+    public String getDayOfDeath(){
+        return String.valueOf(this.dayOfDeath);
     }
 
 

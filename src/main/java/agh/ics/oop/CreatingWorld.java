@@ -48,7 +48,7 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        checkingForDeadAnimals();
+        checkingForDeadAnimals(day);
         movingAnimals();
         checkingWhatOnFieldsIs();
         growingPlants();
@@ -92,12 +92,13 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
         }
     }
 
-    public void checkingForDeadAnimals(){
+    public void checkingForDeadAnimals(int day){
         ArrayList<Animal> deadAnimals = new ArrayList<>();
         if (animals.size() > 0) {
             for (Animal animal : animals) {
                 if (animal.isDying()) {
                     removingDeadAnimal(animal);
+                    animal.death(day);
                     deadAnimals.add(animal);
                 }
             }

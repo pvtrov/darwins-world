@@ -31,33 +31,48 @@ public class App extends Application{
     private World world ;
     private Stage stage;
     private CreatingWorld engine;
-//    MapDrawings mapDrawings;
-    private Object MapDrawings;
 
     public static void main(String[] args){
         Application.launch(App.class);
     }
 
     public void start(Stage primaryStage) throws Exception {
-        gridPane = createMapDrawing();
-        Scene scene = new Scene(gridPane, 1000, 1000);
+        Scene scene = new Scene(gridPane, world.map.getWidth()*100, world.map.getHeight()*100);
+        movingOnTheMap(gridPane);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     @Override
-    public void init() {
-        System.out.println("cos2");
+    public void init() throws Exception {
         int moveDelay = 500;
         world = new World();
         map = new WorldMap(world.map.getWidth(), world.map.getHeight(), world.map.getJungleHeight(), world.map.getJungleWidth());
         engine = new CreatingWorld(map, world, moveDelay);
-        System.out.println("ygy");
+        gridPane = createMapDrawing();
         Thread engineThread = new Thread(engine);
 
         engineThread.start();
     }
 
+    public GridPane movingOnTheMap(GridPane gridPane) throws Exception {
+        int numberOfColumns = world.map.getWidth();
+        int numberOfRows = world.map.getHeight();
+
+        for (int x = 0; x < numberOfColumns; x++){
+            for (int y = 0; y < numberOfRows; y++){
+                Field field = world.fields.get(new Vector2d(x, y));
+                FileInputStream input = new FileInputStream(giveMeImage(field));
+                javafx.scene.image.Image image = new Image(input);
+                ImageView imageView = new ImageView(image);
+                imageView.setFitHeight(100.0);
+                imageView.setFitWidth(100.0);
+                GridPane.setHalignment(imageView, HPos.CENTER);
+                gridPane.add(imageView, x, y);
+            }
+        }
+        return gridPane;
+    }
 
     private GridPane createMapDrawing() throws Exception {
         GridPane gridPane = new GridPane();
@@ -75,40 +90,6 @@ public class App extends Application{
             RowConstraints rowConstraints = new RowConstraints(50);
             rowConstraints.setPercentHeight(100.0/numberOfRows);
             gridPane.getRowConstraints().add(rowConstraints);
-        }
-
-        for (int x = 0; x < numberOfColumns; x++){
-            for (int y = 0; y < numberOfRows; y++){
-                Field field = world.fields.get(new Vector2d(x, y));
-                String text;
-                if ( x == 0 && y == 0 ) {
-                    text = "x/y";
-                    Label label = new Label(text);
-                    GridPane.setHalignment(label, HPos.CENTER);
-                    gridPane.add(label, x, y);
-                }
-                else if (x == 0) {
-                    text = "" + y;
-                    Label label = new Label(text);
-                    GridPane.setHalignment(label, HPos.CENTER);
-                    gridPane.add(label, x, y);
-                }
-                else if (y == 0) {
-                    text = "" + x;
-                    Label label = new Label(text);
-                    GridPane.setHalignment(label, HPos.CENTER);
-                    gridPane.add(label, x, y);
-                }
-                else {
-                    FileInputStream input = new FileInputStream(giveMeImage(field));
-                    javafx.scene.image.Image image = new Image(input);
-                    ImageView imageView = new ImageView(image);
-                    imageView.setFitHeight(100.0);
-                    imageView.setFitWidth(100.0);
-                    GridPane.setHalignment(imageView, HPos.CENTER);
-                    gridPane.add(imageView, x, y);
-                }
-            }
         }
         return gridPane;
     }

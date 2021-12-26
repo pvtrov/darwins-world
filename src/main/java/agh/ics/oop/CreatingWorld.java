@@ -57,32 +57,31 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
     }
 
     public void growingPlants(){
-        int counterJungle = 1; int counterSavanna = 1;
         int x; int y;
-        while (counterJungle > 0){
+        if (darwinWorld.fieldsForPlantsJungle.size() != 0){
             x = random.nextInt(darwinWorld.fieldsForPlantsJungle.size());
             Vector2d vector = darwinWorld.fieldsForPlantsJungle.get(x);
             Field field = darwinWorld.fields.get(vector);
             if (field.canPlacePlant(vector)){
                 Plant plant = new Plant(vector, true);
-                counterJungle -- ;
                 field.addingPlants();
                 darwinWorld.plants.put(vector, plant);
                 darwinWorld.mapElements.add(plant);
                 darwinWorld.fieldsForPlantsJungle.remove(vector);
+                System.out.println("just plant has grown up in the jungle ");
             }
         }
-        while (counterSavanna > 0){
+        if(darwinWorld.fieldsForPlantsSavanna.size() != 0){
             y = random.nextInt(darwinWorld.fieldsForPlantsSavanna.size());
             Vector2d vector = darwinWorld.fieldsForPlantsSavanna.get(y);
             Field field = darwinWorld.fields.get(vector);
             if (field.canPlacePlant(vector)){
                 Plant plant = new Plant(vector, false);
-                counterSavanna--;
                 field.addingPlants();
                 darwinWorld.plants.put(vector, plant);
                 darwinWorld.mapElements.add(plant);
                 darwinWorld.fieldsForPlantsSavanna.remove(vector);
+                System.out.println("just plant has grown up in the savanna ");
             }
         }
     }
@@ -94,20 +93,29 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
     }
 
     public void checkingForDeadAnimals(){
-        for (Animal animal : animals){
-            if(animal.isDying()){
-                removingDeadAnimal(animal);
+        ArrayList<Animal> deadAnimals = new ArrayList<>();
+        if (animals.size() > 0) {
+            for (Animal animal : animals) {
+                if (animal.isDying()) {
+                    removingDeadAnimal(animal);
+                    deadAnimals.add(animal);
+                }
             }
+            for (Animal deadAnimal : deadAnimals) {
+                animals.remove(deadAnimal);
+            }
+        }else {
+            System.out.println("there's no living animals");
         }
     }
 
     public void removingDeadAnimal(Animal animal){
         animal.removeObserver(darwinWorld);
         Field field = darwinWorld.fields.get(animal.getPositionOnTheMap());
-        darwinWorld.animals.remove(animal);
         field.removingAnimals(animal);
         darwinWorld.mapElements.remove(animal);
         darwinWorld.deadAnimals.add(animal);
+        System.out.println("dead animal removed");
     }
 
     public void removingEatenPlant(Plant plant, Field field){
@@ -130,6 +138,7 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
                 if (mother.getEnergy() >= startEnergy / 2 && father.getEnergy() >= startEnergy / 2) {
                     copulation(mother, father);
                 }
+            }
         } else if (field.animals.size() > 1) {                     // there are animals but no plant
             Animal mother = field.animals.poll();
             Animal father = field.animals.poll();
@@ -137,9 +146,8 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
                 copulation(mother, father);
             }
         }
-        }
     }
-
+    // todo pq chujowo sortuje, naprawic to
     public void copulation(Animal mother, Animal father){
         Field field = darwinWorld.fields.get(mother.getPositionOnTheMap());
 
@@ -147,12 +155,13 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
         child.addObserver(darwinWorld);
         darwinWorld.animals.add(child);
         darwinWorld.mapElements.add(child);
+        field.addingAnimals(father);
         field.addingAnimals(child);
         field.addingAnimals(mother);
-        field.addingAnimals(father);
+        System.out.println("just new baby was made!");
     }
 
-    // todo zmienic tra funckej bo kest do duopy
+
     public void eatPlant(int plantKcal, Field field, Vector2d position){
         Plant plant = darwinWorld.plants.get(position);
         ArrayList<Animal> eatingAnimals = makeArray(field);
@@ -162,6 +171,7 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
             animal.eatingPlant(kcalForAnimal);
         }
         removingEatenPlant(plant, field);
+        System.out.println("plant was eaten");
     }
 
 
@@ -183,13 +193,11 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
         ArrayList<Animal> animalsWhichWillEatThePlant = new ArrayList<>();
         Animal firstAnimal = field.animals.poll();
         animalsWhichWillEatThePlant.add(firstAnimal);
-        while (!field.animals.isEmpty() && field.animals.peek().getEnergy() != firstAnimal.getEnergy()){
+        while (!field.animals.isEmpty() && field.animals.peek().getEnergy() == firstAnimal.getEnergy()){
             firstAnimal = field.animals.poll();
             animalsWhichWillEatThePlant.add(firstAnimal);
         }
-        for (Animal animal : animalsWhichWillEatThePlant){
-            field.animals.add(animal);
-        }
+        field.animals.addAll(animalsWhichWillEatThePlant);
         return animalsWhichWillEatThePlant;
     }
 }

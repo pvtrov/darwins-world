@@ -71,7 +71,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
         switch (gene) {
             case 0:
                 Vector2d newPosition = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                if (newPosition.precedes(new Vector2d(1, 1)) && newPosition.follows(new Vector2d(getWidth()-1, getHeight()-1))){
+                if (newPosition.precedes(new Vector2d(0, 0)) && newPosition.follows(new Vector2d(getWidth()-1, getHeight()-1))){
                     Vector2d oldPosition = this.positionOnTheMap;
                     this.oldPosition = oldPosition;
                     this.positionOnTheMap = newPosition;
@@ -89,7 +89,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
                 break;
             case 4:
                 Vector2d newPositionB = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                if (newPositionB.precedes(new Vector2d(1, 1)) && newPositionB.follows(new Vector2d(getWidth()-1, getHeight()-1))){
+                if (newPositionB.precedes(new Vector2d(0, 0)) && newPositionB.follows(new Vector2d(getWidth()-1, getHeight()-1))){
                     Vector2d oldPosition = this.positionOnTheMap;
                     this.oldPosition = oldPosition;
                     this.positionOnTheMap = newPositionB;
@@ -116,7 +116,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
         return this.energy < moveEnergy;
     }
 
-    public void madeNewBaby(){
+    private void madeNewBaby(){
         this.numberOfKids += 1;
         this.numberOfDescendants += 1;
     }
@@ -190,7 +190,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
                 return "src/main/resources/panda_41-60.png";
             } else if (sixty < energyLevel && energyLevel <= eighty) {
                 return "src/main/resources/panda_61-80.png";
-            } else if (eighty < energyLevel && energyLevel <= initialEnergy) {
+            } else if (eighty < energyLevel) {
                 return "src/main/resources/panda_81-100.png";
             }
         }catch (Exception exception){

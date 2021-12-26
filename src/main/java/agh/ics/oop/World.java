@@ -9,8 +9,8 @@ public class World extends InputParameters implements IPositionChangeObserver {
     public ArrayList<Animal> animals = new ArrayList<>();
     public HashMap<Vector2d, Plant> plants = new HashMap<>();
     public WorldMap map;
-    public HashMap<Vector2d, Field> fields = new HashMap<>(getHeight()*getWidth());
     public ArrayList<Animal> deadAnimals = new ArrayList<>();
+    public HashMap<Vector2d, Field> fields = new HashMap<>(getHeight()*getWidth());
     public ArrayList<Vector2d> fieldsForPlantsJungle = new ArrayList<>();
     public ArrayList<Vector2d> fieldsForPlantsSavanna = new ArrayList<>();
     public ArrayList<Vector2d> fieldsForAnimals = new ArrayList<>();
@@ -31,8 +31,8 @@ public class World extends InputParameters implements IPositionChangeObserver {
     public void makingFieldsArrays(){
         Vector2d jungleLowerLeft = map.jungleCountingLowerLeft();
         Vector2d jungleUpperRight = map.jungleCountingUpperRight();
-        for (int i = 1; i < getWidth(); i++) {
-            for (int j = 1; j < getHeight(); j++) {
+        for (int i = 0; i < getWidth(); i++) {
+            for (int j = 0; j < getHeight(); j++) {
                 Vector2d vector = new Vector2d(i, j);
                 if (vector.precedes(jungleLowerLeft) && vector.follows(jungleUpperRight)) {
                     fields.put(new Vector2d(i, j), new Field(new Vector2d(i, j), false, true));
@@ -89,7 +89,6 @@ public class World extends InputParameters implements IPositionChangeObserver {
                 animal.addObserver(this);
                 field.addingAnimals(animal);
                 animals.add(animal);
-                fieldsForAnimals.remove(fieldAddress);
                 mapElements.add(animal);
                 numberOfAnimal --;
             }
@@ -106,8 +105,6 @@ public class World extends InputParameters implements IPositionChangeObserver {
                 break;
             }
         }
-//        animals.remove(movedAnimal);
-//        animals.add(movedAnimal);
         Field fieldToRemove = fields.get(oldPosition);
         fieldToRemove.animals.remove(movedAnimal);
         Field fieldToAdd = fields.get(newPosition);

@@ -27,8 +27,8 @@
 //
 //    private void createMapDrawing() throws Exception {
 //        GridPane gridPane = new GridPane();
-//        int numberOfColumns = world.map.getWidth();
-//        int numberOfRows = world.map.getHeight();
+//        int numberOfColumns = world.map.getWidthWorld();
+//        int numberOfRows = world.map.getHeightWorld();
 //
 //        for (int i = 0; i < numberOfColumns; i++){
 //            ColumnConstraints columnConstraints = new ColumnConstraints(50);

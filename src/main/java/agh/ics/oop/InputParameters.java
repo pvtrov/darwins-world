@@ -1,27 +1,50 @@
 package agh.ics.oop;
 
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+
 public class InputParameters {
-    int height = 7;
-    int width = 7;
-    int startEnergy = 100;
-    int initialNumberOfAnimals = 15;
-    int initialNumberOfPlants = 20;
-    int moveEnergy = 10;
-    int plantKcal = 20;
-    int jungleRatio = 30;  // pobieram w procentach
+    int heightWorld;
+    int widthWorld;
+    int startAnimalEnergy;
+    int initialNumberOfAnimals = 5;
+    int initialNumberOfPlants = 10;
+    int moveAnimalEnergy ;
+    int plantKcal;
+    int jungleRatioo;  // pobieram w procentach
     int jungleHeight;
     int jungleWidth;
 
-    public int getHeight(){
-        return height;
+
+    public InputParameters(int widthWorld, int heightWorld, int startAnimalEnergy, int moveAnimalEnergy, int plantKcal, int jungleRatioo){
+        this.heightWorld = heightWorld;
+        this.widthWorld = widthWorld;
+        this.startAnimalEnergy = startAnimalEnergy;
+        this.moveAnimalEnergy = moveAnimalEnergy;
+        this.plantKcal = plantKcal;
+        this.jungleRatioo = jungleRatioo;
+        this.jungleHeight = jungleCounting();
+        this.jungleWidth = getJungleWidth();
+        this.initialNumberOfAnimals = 5;
+        this.initialNumberOfPlants = 10;
     }
 
-    public int getWidth(){
-        return width;
+    public InputParameters() {
+    }
+
+    public int getHeightWorld(){
+        return this.heightWorld;
+    }
+
+    public int getWidthWorld(){
+        return this.widthWorld;
     }
 
     public int getStartEnergy(){
-        return startEnergy;
+        return this.startAnimalEnergy;
     }
 
     public int getInitialNumberOfAnimals(){
@@ -32,16 +55,16 @@ public class InputParameters {
         return initialNumberOfPlants;
     }
 
-    public int getMoveEnergy(){
-        return moveEnergy;
+    public int getMoveAnimalEnergy(){
+        return this.moveAnimalEnergy;
     }
 
     public int getPlantKcal(){
-        return plantKcal;
+        return this.plantKcal;
     }
 
-    public int getJungleRatio(){
-        return jungleRatio;
+    public int getJungleRatioo(){
+        return this.jungleRatioo;
     }
 
     public int getJungleHeight(){
@@ -50,15 +73,15 @@ public class InputParameters {
 
     public int getJungleWidth(){
         jungleHeight = jungleCounting();
-        return (jungleRatio*allFields/100) / jungleHeight;
+        return (jungleRatioo *allFields/100) / jungleHeight;
     }
 
     int allFields; int jungleFields;
     // oblicznie jungli
     public int jungleCounting(){
-        allFields = height * width;  // b, a
-        jungleFields = jungleRatio*allFields/100;  // A
-        jungleHeight = (int) Math.sqrt(jungleFields*height/width);
+        allFields = this.heightWorld * this.widthWorld;  // b, a
+        jungleFields = this.jungleRatioo *allFields/100;  // A
+        jungleHeight = (int) Math.sqrt(jungleFields* this.heightWorld / this.widthWorld);
         return jungleHeight;
     }
 }

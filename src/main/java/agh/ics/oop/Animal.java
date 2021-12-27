@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class Animal extends InputParameters implements IPositionChangeObserver, IMapElement{
+public class Animal implements IPositionChangeObserver, IMapElement{
+    private InputParameters inputParameters;
     private Vector2d oldPosition;
     private Vector2d positionOnTheMap;
     private MapDirections orientation;
@@ -21,16 +22,18 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
 
 
     // constructors
-    public Animal(Vector2d positionOnTheMap) {       // creating Adam and Eve
+    public Animal(Vector2d positionOnTheMap, InputParameters inputParameters) {       // creating Adam and Eve
+        this.inputParameters = inputParameters;
         this.positionOnTheMap = positionOnTheMap;
         this.orientation = MapDirections.getRandom();
-        this.energy = getStartEnergy();
+        this.energy = inputParameters.startAnimalEnergy;
         this.genotype = new DNA();
         this.observers = new ArrayList<>();
         this.oldPosition = null;
     }
 
-    public Animal(Animal firstParent, Animal secondParent){     // creating new child
+    public Animal(Animal firstParent, Animal secondParent, InputParameters inputParameters){     // creating new child
+        this.inputParameters = inputParameters;
         this.positionOnTheMap = new Vector2d(firstParent.positionOnTheMap.x, firstParent.positionOnTheMap.y);
         this.orientation = MapDirections.getRandom();
         this.energy = firstParent.energy /4 + secondParent.energy /4;
@@ -66,18 +69,22 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
 
 
     // living
-    public void move(int[] genes){
+    public void move(int[] genes, boolean isLeft){
         int x = random.nextInt(32);
         int gene = genes[x];
         switch (gene) {
             case 0:
-                Vector2d newPosition = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                if (newPosition.precedes(new Vector2d(0, 0)) && newPosition.follows(new Vector2d(getWidth()-1, getHeight()-1))){
-                    Vector2d oldPosition = this.positionOnTheMap;
-                    this.oldPosition = oldPosition;
-                    this.positionOnTheMap = newPosition;
-                    positionChange(oldPosition, newPosition);
-                    break;
+                if (isLeft){
+//                    Vector2d newPosition =
+                }else{
+                    Vector2d newPosition = this.positionOnTheMap.add(this.orientation.toUnitVector());
+                    if (newPosition.precedes(new Vector2d(0, 0)) && newPosition.follows(new Vector2d(inputParameters.getWidthWorld()-1, inputParameters.getHeightWorld()-1))){
+                        Vector2d oldPosition = this.positionOnTheMap;
+                        this.oldPosition = oldPosition;
+                        this.positionOnTheMap = newPosition;
+                        positionChange(oldPosition, newPosition);
+                        break;
+                    }
                 }
             case 1:
                 this.orientation = this.orientation.next();
@@ -89,13 +96,17 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
                 this.orientation = this.orientation.next().next().next();
                 break;
             case 4:
-                Vector2d newPositionB = this.positionOnTheMap.add(this.orientation.toUnitVector());
-                if (newPositionB.precedes(new Vector2d(0, 0)) && newPositionB.follows(new Vector2d(getWidth()-1, getHeight()-1))){
-                    Vector2d oldPosition = this.positionOnTheMap;
-                    this.oldPosition = oldPosition;
-                    this.positionOnTheMap = newPositionB;
-                    positionChange(oldPosition, newPositionB);
-                    break;
+                if (isLeft){
+
+                }else{
+                    Vector2d newPositionB = this.positionOnTheMap.add(this.orientation.toUnitVector());
+                    if (newPositionB.precedes(new Vector2d(0, 0)) && newPositionB.follows(new Vector2d(inputParameters.getWidthWorld()-1, inputParameters.getHeightWorld()-1))){
+                        Vector2d oldPosition = this.positionOnTheMap;
+                        this.oldPosition = oldPosition;
+                        this.positionOnTheMap = newPositionB;
+                        positionChange(oldPosition, newPositionB);
+                        break;
+                    }
                 }
             case 5:
                 this.orientation = this.orientation.next().next().next().next().next();
@@ -109,12 +120,13 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
     }
 
 
+
     public void eatingPlant(int kcal){
         this.energy = this.energy + kcal;
     }
 
-    public boolean isDying(){      // animal will die anyway after move if his energy is less than moveEnergy
-        return this.energy < moveEnergy;
+    public boolean isDying(){      // animal will die anyway after move if his energy is less than moveAnimalEnergy
+        return this.energy < inputParameters.moveAnimalEnergy;
     }
 
     private void madeNewBaby(){
@@ -127,7 +139,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
     }
 
     public Animal makingNewBaby(Animal secondParent){
-        Animal child = new Animal(this, secondParent);
+        Animal child = new Animal(this, secondParent, inputParameters);
         this.energy = (int) (0.75 * this.energy);
         secondParent.energy = (int) (0.75 * secondParent.energy);
         this.madeNewBaby(); secondParent.madeNewBaby();
@@ -135,7 +147,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
     }
 
     public void loseEnergy(){
-        this.energy = this.energy - moveEnergy;
+        this.energy = this.energy - inputParameters.moveAnimalEnergy;
     }
 
     // for observers
@@ -176,7 +188,7 @@ public class Animal extends InputParameters implements IPositionChangeObserver, 
 
     @Override
     public String getPath() {
-        int initialEnergy = getStartEnergy();
+        int initialEnergy = inputParameters.startAnimalEnergy;
         int zero = 0;
         int twenty = initialEnergy / 5;
         int forty = 2 * initialEnergy / 5;

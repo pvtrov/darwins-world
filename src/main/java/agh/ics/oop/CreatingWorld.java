@@ -21,8 +21,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
-public class CreatingWorld extends InputParameters implements Runnable{     // this class is my engine
+// prawa to mur, lewa sie zawija
+
+public class CreatingWorld implements Runnable{     // this class is my engine
     Random random = new Random();
+    private boolean isLeftMap;
+    InputParameters inputParameters;
     private WorldMap map;
     private World darwinWorld;
     private App application;
@@ -31,8 +35,10 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
     private int day = 1;
 
 
-    public CreatingWorld(WorldMap map, World world, int moveDaily){
+    public CreatingWorld (World world, int moveDaily, boolean isLeftMap){
+        this.isLeftMap = isLeftMap;
         this.darwinWorld = world;
+        this.inputParameters = darwinWorld.inputParameters;
         this.map = darwinWorld.map;
         this.moveDaily = moveDaily;
         this.animals = darwinWorld.animals;
@@ -43,11 +49,6 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
     }
 
     public void day(){
-        try {
-            Thread.sleep(moveDaily);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         checkingForDeadAnimals(day);
         movingAnimals();
         checkingWhatOnFieldsIs();
@@ -132,22 +133,24 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
 
     public void isSomethingThere(Field field) {         // getting position and checking if and what is there
         if (field.isPlantGrown && !field.animals.isEmpty()) {    // there are animals and plant
-            eatPlant(plantKcal, field, field.fieldAddress);
+            eatPlant(inputParameters.plantKcal, field, field.fieldAddress);
             if (field.animals.size() > 1) {
                 Animal mother = field.animals.poll();
                 Animal father = field.animals.poll();
-                if (mother.getEnergy() >= startEnergy / 2 && father.getEnergy() >= startEnergy / 2) {
+                if (mother.getEnergy() >= inputParameters.startAnimalEnergy / 2 && father.getEnergy() >= inputParameters.startAnimalEnergy / 2) {
                     copulation(mother, father);
                 }
             }
         } else if (field.animals.size() > 1) {                     // there are animals but no plant
             Animal mother = field.animals.poll();
             Animal father = field.animals.poll();
-            if (mother.getEnergy() >= startEnergy / 2 && father.getEnergy() >= startEnergy / 2) {
+            if (mother.getEnergy() >= inputParameters.startAnimalEnergy / 2 && father.getEnergy() >= inputParameters.startAnimalEnergy / 2) {
                 copulation(mother, father);
             }
         }
     }
+
+    // todo zle licze potomkow
     // todo pq chujowo sortuje, naprawic to
     public void copulation(Animal mother, Animal father){
         Field field = darwinWorld.fields.get(mother.getPositionOnTheMap());
@@ -177,16 +180,28 @@ public class CreatingWorld extends InputParameters implements Runnable{     // t
 
 
     public void movingAnimals(){
-        for (Animal animal : animals){
-            animal.move(animal.getGenotype().getIntGenotype());
-            animal.loseEnergy();
+        if (isLeftMap){
+            for (Animal animal : animals){
+                animal.move(animal.getGenotype().getIntGenotype(), true);
+                animal.loseEnergy();
+            }
+        }else {
+            for (Animal animal : animals) {
+                animal.move(animal.getGenotype().getIntGenotype(), false);
+                animal.loseEnergy();
+            }
         }
     }
 
 
     public void run() {
         while (true){
-            day();
+            try {
+                day();
+                Thread.sleep(moveDaily);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -20,7 +20,7 @@ public class World implements IPositionChangeObserver {
     public int sumOfNumberOfKids = 0;
     public int magic = 3;
     public int day = 0;
-    public SaveFile saveFile = new SaveFile(inputParameters, isLeft);
+    public SaveFile saveFile;
     public int allAnimals = 0;
     public int allPlants = 0;
     public int allEnergy = 0;
@@ -36,6 +36,7 @@ public class World implements IPositionChangeObserver {
         makingFieldsArrays();
         this.placingPlantsAtTheBegin();
         this.placingAdamAndEva();
+        saveFile = new SaveFile(inputParameters, isLeft);
     }
 
     // methods for creating the world

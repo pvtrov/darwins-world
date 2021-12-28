@@ -3,13 +3,14 @@ package agh.ics.oop;
 // tutaj sprawdzam co jest na danym polu, i skierowywuje do odpoweidnich dzialan
 
 
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class Field implements IWorldMap{
     public Vector2d fieldAddress;
     public boolean isPlantGrown = false;
     public boolean isJungle = false;
-    public PriorityQueue<Animal> animals = new PriorityQueue<>((x, y) -> x.getEnergy() > y.getEnergy() ? 1 : -1);
+    public PriorityQueue<Animal> animals = new PriorityQueue<>(Comparator.comparingInt(Animal::getEnergy));
 
 
     public void addingPlants(){
@@ -27,16 +28,15 @@ public class Field implements IWorldMap{
     }
 
     public void addingAnimals(Animal animal){
-        animals.add(animal);
+        this.animals.add(animal);
     }
-
 
     public boolean isEmpty(){
         return isPlantGrown == false && animals.isEmpty();
     }
 
     public void removingAnimals(Animal animal){
-        animals.remove(animal);
+        this.animals.remove(animal);
     }
 
     @Override

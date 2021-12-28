@@ -7,19 +7,21 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class InputParameters {
-    int heightWorld;
-    int widthWorld;
-    int startAnimalEnergy;
-    int initialNumberOfAnimals = 5;
-    int initialNumberOfPlants = 10;
-    int moveAnimalEnergy ;
-    int plantKcal;
-    int jungleRatioo;  // pobieram w procentach
-    int jungleHeight;
-    int jungleWidth;
+    public int heightWorld;
+    public int widthWorld;
+    public int startAnimalEnergy;
+    public int initialNumberOfAnimals;
+    public int initialNumberOfPlants;
+    public int moveAnimalEnergy ;
+    public int plantKcal;
+    public int jungleRatioo;  // pobieram w procentach
+    public int jungleHeight;
+    public int jungleWidth;
+    public boolean magicLeft;
+    public boolean magicRight;
 
 
-    public InputParameters(int widthWorld, int heightWorld, int startAnimalEnergy, int moveAnimalEnergy, int plantKcal, int jungleRatioo){
+    public InputParameters(int widthWorld, int heightWorld, int initialNumberOfAnimals, int startAnimalEnergy, int moveAnimalEnergy, int plantKcal, int jungleRatioo, boolean magicLeft, boolean magicRight){
         this.heightWorld = heightWorld;
         this.widthWorld = widthWorld;
         this.startAnimalEnergy = startAnimalEnergy;
@@ -28,8 +30,10 @@ public class InputParameters {
         this.jungleRatioo = jungleRatioo;
         this.jungleHeight = jungleCounting();
         this.jungleWidth = getJungleWidth();
-        this.initialNumberOfAnimals = 5;
-        this.initialNumberOfPlants = 10;
+        this.initialNumberOfAnimals = initialNumberOfAnimals;
+        this.initialNumberOfPlants = 0;
+        this.magicLeft = magicLeft;
+        this.magicRight = magicRight;
     }
 
     public InputParameters() {

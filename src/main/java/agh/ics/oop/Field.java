@@ -1,10 +1,9 @@
 package agh.ics.oop;
 
-// tutaj sprawdzam co jest na danym polu, i skierowywuje do odpoweidnich dzialan
-
-
 import java.util.Comparator;
 import java.util.PriorityQueue;
+
+// this class is responsible for each position on the map
 
 public class Field implements IWorldMap{
     public Vector2d fieldAddress;
@@ -13,30 +12,28 @@ public class Field implements IWorldMap{
     public PriorityQueue<Animal> animals = new PriorityQueue<>(Comparator.comparingInt(Animal::getEnergy));
 
 
-    public void addingPlants(){
-        isPlantGrown = true;
-    }
-
-    public void removingPlants(){
-        isPlantGrown = false;
-    }
-
+    // constructor
     public Field(Vector2d fieldAddress, boolean isPlantGrown, boolean isJungle) {
         this.isJungle = isJungle;
         this.fieldAddress = fieldAddress;
         this.isPlantGrown = isPlantGrown;
     }
 
+    // methods
     public void addingAnimals(Animal animal){
         this.animals.add(animal);
     }
 
-    public boolean isEmpty(){
-        return isPlantGrown == false && animals.isEmpty();
-    }
-
     public void removingAnimals(Animal animal){
         this.animals.remove(animal);
+    }
+
+    public void addingPlants(){
+        isPlantGrown = true;
+    }
+
+    public void removingPlants(){
+        isPlantGrown = false;
     }
 
     @Override
@@ -49,8 +46,4 @@ public class Field implements IWorldMap{
         return animals.isEmpty();
     }
 
-    @Override
-    public boolean isOccupied(Vector2d fieldAddress) {
-        return !animals.isEmpty();
-    }
 }

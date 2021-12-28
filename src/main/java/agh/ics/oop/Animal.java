@@ -1,8 +1,5 @@
 package agh.ics.oop;
 
-// zwierze moze wchodzic tam gdzie jest trawa i inne zwierzeta
-// wtedy zachodzą odpowiednie operacje
-
 import java.util.*;
 
 public class Animal implements IPositionChangeObserver, IMapElement{
@@ -47,21 +44,15 @@ public class Animal implements IPositionChangeObserver, IMapElement{
     }
 
 
-    // getters
-    public MapDirections getOrientation(){
-        return this.orientation;
-    }
-
+    // getters or for statistics
     @Override
     public Vector2d getPositionOnTheMap(){
         return this.positionOnTheMap;
     }
 
-
     public int getEnergy(){
         return this.energy;
     }
-
 
     public DNA getGenotype(){
         return this.genotype;
@@ -69,6 +60,42 @@ public class Animal implements IPositionChangeObserver, IMapElement{
 
     public Vector2d getOldPosition(){
         return this.oldPosition;
+    }
+
+    public String getNumberOfKids(){
+        return String.valueOf(this.numberOfKids);
+    }
+
+    public String getGenotypeToStatistic(){
+        String stringGenotype = "";
+        for (int i : this.genotype.getIntGenotype()){
+            stringGenotype = stringGenotype + Integer.toString(i);
+        }
+        return stringGenotype;
+    }
+
+    public String getNumberOfDescendants(){
+        return String.valueOf(this.numberOfDescendants);
+    }
+
+    public String getDayOfDeath(){
+        return String.valueOf(this.dayOfDeath);
+    }
+
+    public int getDominantGen(){
+        int[] intGenotype = this.genotype.getIntGenotype();
+        int gens[] = {0, 0, 0, 0, 0, 0, 0, 0};
+        for (int gen : intGenotype){
+            gens[gen] += 1;
+        }
+        IntSummaryStatistics genss = Arrays.stream(gens).summaryStatistics();
+        int max = genss.getMax();
+        for (int i = 0; i < gens.length; i++){
+            if (max == gens[i]){
+                return i;
+            }
+        }
+        return 0;
     }
 
 
@@ -148,11 +175,9 @@ public class Animal implements IPositionChangeObserver, IMapElement{
             }else if(position.y < 0){ y = inputParameters.getHeightWorld()-1;}
             else y = position.y;
 
-            System.out.println("animal just has been teleported");
             return new Vector2d(x, y);
         }
     }
-
 
     public void eatingPlant(int kcal){
         this.energy = this.energy + kcal;
@@ -193,6 +218,7 @@ public class Animal implements IPositionChangeObserver, IMapElement{
         this.energy = this.energy - inputParameters.moveAnimalEnergy;
     }
 
+
     // for observers
     public void addObserver(IPositionChangeObserver observer){
         this.observers.add(observer);
@@ -206,74 +232,9 @@ public class Animal implements IPositionChangeObserver, IMapElement{
         observers.forEach(observer -> observer.positionChanged(oldPosition, newPosition));
     }
 
-    // to statistics
-    public String getNumberOfKids(){
-        return String.valueOf(this.numberOfKids);
-    }
-
-    public String getGenotypeToStatistic(){
-        String stringGenotype = "";
-        for (int i : this.genotype.getIntGenotype()){
-            stringGenotype = stringGenotype + Integer.toString(i);
-        }
-        return stringGenotype;
-    }
-
-    public String getNumberOfDescendants(){
-        return String.valueOf(this.numberOfDescendants);
-    }
-
-    public String getDayOfDeath(){
-        return String.valueOf(this.dayOfDeath);
-    }
-
-    public int getDominantGen(){
-        int[] intGenotype = this.genotype.getIntGenotype();
-        int gens[] = {0, 0, 0, 0, 0, 0, 0, 0};
-        for (int gen : intGenotype){
-            gens[gen] += 1;
-        }
-        IntSummaryStatistics genss = Arrays.stream(gens).summaryStatistics();
-        int max = genss.getMax();
-        for (int i = 0; i < gens.length; i++){
-            if (max == gens[i]){
-                return i;
-            }
-        }
-        return 0;
-    }
-
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
 
     }
 
-    @Override
-    public String getPath() {
-        int initialEnergy = inputParameters.startAnimalEnergy;
-        int zero = 0;
-        int twenty = initialEnergy / 5;
-        int forty = 2 * initialEnergy / 5;
-        int sixty = 3 * initialEnergy / 5;
-        int eighty = 4 * initialEnergy / 5;
-
-        Animal animal = (Animal) this;
-        int energyLevel = animal.getEnergy();
-        try {
-            if (zero <= energyLevel && energyLevel <= twenty) {
-                return "src/main/resources/panda_0-20.png";
-            } else if (twenty < energyLevel && energyLevel <= forty) {
-                return "src/main/resources/panda_21-40.png";
-            } else if (forty < energyLevel && energyLevel <= sixty) {
-                return "src/main/resources/panda_41-60.png";
-            } else if (sixty < energyLevel && energyLevel <= eighty) {
-                return "src/main/resources/panda_61-80.png";
-            } else if (eighty < energyLevel) {
-                return "src/main/resources/panda_81-100.png";
-            }
-        }catch (Exception exception){
-            return "there is a problem with animal color";
-        }
-        return "";
-    }
 }

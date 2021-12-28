@@ -1,8 +1,6 @@
 package agh.ics.oop.gui;
 
 import agh.ics.oop.InputParameters;
-import agh.ics.oop.World;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +10,7 @@ public class SaveFile {
     String rightPath = "src/main/resources/fileRight.csv";
     FileWriter fileWriter = null;
 
+    // constructor
     public SaveFile(InputParameters inputParameters, boolean isLeft) throws IOException {
         if (isLeft){
             File fileLeft = new File("src/main/resources/fileLeft.csv");
@@ -50,6 +49,7 @@ public class SaveFile {
         }
     }
 
+    // methods
     private String prepareFirstLine(){
         String s = "day  animals  plants  energy  kids  life expectancy";
         return s;
@@ -76,4 +76,5 @@ public class SaveFile {
             }
         }
     }
+
 }

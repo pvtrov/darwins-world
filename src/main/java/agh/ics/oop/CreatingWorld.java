@@ -1,36 +1,25 @@
 package agh.ics.oop;
 
-// 1. stworzenie swiata
-// 2. start symulacji
-// 3. usuwanie martwych zwierzat
-// 4. ruch zwierzat
-// 5. jedzenie
-// 6. rozmanzanie  -> 5 i 6 zawiera sie w funkcji isSomethingThere
-// 7. dodanie nowych roslin
-
-// oprozc tego
-// todo zrobic caly frontend
-// todo dodac statystyki
-
-
-
 import agh.ics.oop.gui.App;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-// prawa to mur, lewa sie zawija
+// 1. creating the world
+// 2. simulation start
+// 3. removing dead animals
+// 4. moving animals
+// 5. feeding animals
+// 6. reproducing animals  -> 5 i 6 are executing in isSomethingThere function
+// 7. adding new plants
 
+// this class is my engine
 public class CreatingWorld implements Runnable, IMapObserver{
-    public InputParameters inputParameters;     // this class is my engine
+    public InputParameters inputParameters;
     Random random = new Random();
-    List<int[]> statisticsArray = new ArrayList<int[]>();
     public final boolean isThisMapMagic;
     private final boolean isLeftMap;
     private WorldMap map;
     public World darwinWorld;
-    private App application;
     private int moveDaily;
     private ArrayList<Animal> animals;
     private int day = 1;
@@ -39,10 +28,9 @@ public class CreatingWorld implements Runnable, IMapObserver{
     public boolean isRunning = true;
     public boolean startApp = true;
 
-
+    // constructor
     public CreatingWorld (World world, int moveDaily, App application, boolean isLeftMap, boolean isThisMapMagic){
         this.isThisMapMagic = isThisMapMagic;
-        this.application = application;
         this.isLeftMap = isLeftMap;
         this.darwinWorld = world;
         this.inputParameters = darwinWorld.inputParameters;
@@ -54,51 +42,8 @@ public class CreatingWorld implements Runnable, IMapObserver{
 
     }
 
-    public int countDay(int day){
-        return day += 1;
-    }
 
-    public int numberOfMagic(int magic){
-        return magic += 1;
-    }
-
-    public void day() throws Exception {
-        checkingForDeadAnimals(day);
-        if (isThisMapMagic && darwinWorld.animals.size() > 0 && darwinWorld.animals.size() <= 5 && numberOfMagic(magic) < 4){
-            makingMagic(darwinWorld.animals.get(0), 5);
-            darwinWorld.magicHappened();
-            magic = numberOfMagic(magic);
-            System.out.println("magic happened");
-        }else if(isThisMapMagic && darwinWorld.animals.size() == 0 && numberOfMagic(magic) < 4){
-            Animal newAnimal = new Animal(new Vector2d(0, 0), inputParameters);
-            newAnimal.addObserver(darwinWorld);
-            makingMagic(newAnimal, 4);
-            darwinWorld.magicHappened();
-            magic = numberOfMagic(magic);
-            System.out.println("magic happened");
-        }
-        movingAnimals();
-        checkingWhatOnFieldsIs();
-        growingPlants();
-        day = countDay(day);
-        darwinWorld.nextDay();
-//        updateStatistics(darwinWorld);
-        darwinWorld.updateStatistics();
-        update();
-        System.out.println(day);
-    }
-
-    public void update(){
-        observers.forEach(observer -> {
-            try {
-                observer.updateHBox(this.darwinWorld, isLeftMap);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-    }
-
+    // runners
     public void run() {
         while (startApp){
             try {
@@ -111,51 +56,44 @@ public class CreatingWorld implements Runnable, IMapObserver{
         }
     }
 
-    public void sleep() throws InterruptedException {
-        while (!isRunning){
-            Thread.sleep(1000);
+    public void day() throws Exception {
+        checkingForDeadAnimals(day);
+        if (isThisMapMagic && darwinWorld.animals.size() > 0 && darwinWorld.animals.size() <= 5 && numberOfMagic(magic) < 4){
+            makingMagic(darwinWorld.animals.get(0), 5);
+            darwinWorld.magicHappened();
+            magic = numberOfMagic(magic);
+
+        }else if(isThisMapMagic && darwinWorld.animals.size() == 0 && numberOfMagic(magic) < 4){
+            Animal newAnimal = new Animal(new Vector2d(0, 0), inputParameters);
+            newAnimal.addObserver(darwinWorld);
+            makingMagic(newAnimal, 4);
+            darwinWorld.magicHappened();
+            magic = numberOfMagic(magic);
         }
+        movingAnimals();
+        checkingWhatOnFieldsIs();
+        growingPlants();
+        day = countDay(day);
+        darwinWorld.nextDay();
+        darwinWorld.updateStatistics();
+        update();
     }
 
-    public void growingPlants(){
-        int x; int y;
-        if (darwinWorld.fieldsForPlantsJungle.size() != 0){
-            x = random.nextInt(darwinWorld.fieldsForPlantsJungle.size());
-            Vector2d vector = darwinWorld.fieldsForPlantsJungle.get(x);
-            Field field = darwinWorld.fields.get(vector);
-            if (field.canPlacePlant(vector)){
-                Plant plant = new Plant(vector, true);
-                field.addingPlants();
-                darwinWorld.plants.put(vector, plant);
-                darwinWorld.mapElements.add(plant);
-                darwinWorld.fieldsForPlantsJungle.remove(vector);
-                System.out.println("plant just has grown up in the jungle ");
+
+    // methods for each day
+    public void checkingForDeadAnimals(int day){
+        ArrayList<Animal> deadAnimals = new ArrayList<>();
+        if (animals.size() > 0) {
+            for (Animal animal : animals) {
+                if (animal.isDying()) {
+                    removingDeadAnimal(animal);
+                    animal.death(day);
+                    deadAnimals.add(animal);
+                }
             }
-        }
-        if(darwinWorld.fieldsForPlantsSavanna.size() != 0){
-            y = random.nextInt(darwinWorld.fieldsForPlantsSavanna.size());
-            Vector2d vector = darwinWorld.fieldsForPlantsSavanna.get(y);
-            Field field = darwinWorld.fields.get(vector);
-            if (field.canPlacePlant(vector)){
-                Plant plant = new Plant(vector, false);
-                field.addingPlants();
-                darwinWorld.plants.put(vector, plant);
-                darwinWorld.mapElements.add(plant);
-                darwinWorld.fieldsForPlantsSavanna.remove(vector);
-                System.out.println("plant just has grown up in the savanna ");
+            for (Animal deadAnimal : deadAnimals) {
+                animals.remove(deadAnimal);
             }
-        }
-    }
-
-    public void updateStatistics(World world){
-        int[] newDayStatistic = {world.day, world.getNumberOfLivingAnimals(), world.getNumberOfPlants(),(int) world.getAverageOfEnergy(),
-                (int) world.getAverageOfNumberOfKids(), world.getAverageOfLivingTime()};
-        statisticsArray.add(newDayStatistic);
-    }
-
-    public void checkingWhatOnFieldsIs(){
-        for (Field field : darwinWorld.fields.values()) {
-            isSomethingThere(field);
         }
     }
 
@@ -176,21 +114,67 @@ public class CreatingWorld implements Runnable, IMapObserver{
         }
     }
 
-    public void checkingForDeadAnimals(int day){
-        ArrayList<Animal> deadAnimals = new ArrayList<>();
-        if (animals.size() > 0) {
-            for (Animal animal : animals) {
-                if (animal.isDying()) {
-                    removingDeadAnimal(animal);
-                    animal.death(day);
-                    deadAnimals.add(animal);
-                }
-            }
-            for (Animal deadAnimal : deadAnimals) {
-                animals.remove(deadAnimal);
+    public void movingAnimals(){
+        if (isLeftMap){
+            for (Animal animal : animals){
+                animal.move(animal.getGenotype().getIntGenotype(), true);
+                animal.loseEnergy();
             }
         }else {
-            System.out.println("there's no living animals");
+            for (Animal animal : animals) {
+                animal.move(animal.getGenotype().getIntGenotype(), false);
+                animal.loseEnergy();
+            }
+        }
+    }
+
+    public void checkingWhatOnFieldsIs(){
+        for (Field field : darwinWorld.fields.values()) {
+            isSomethingThere(field);
+        }
+    }
+
+    public void growingPlants(){
+        int x; int y;
+        if (darwinWorld.fieldsForPlantsJungle.size() != 0){
+            x = random.nextInt(darwinWorld.fieldsForPlantsJungle.size());
+            Vector2d vector = darwinWorld.fieldsForPlantsJungle.get(x);
+            Field field = darwinWorld.fields.get(vector);
+            if (field.canPlacePlant(vector)){
+                Plant plant = new Plant(vector, true);
+                field.addingPlants();
+                darwinWorld.plants.put(vector, plant);
+                darwinWorld.mapElements.add(plant);
+                darwinWorld.fieldsForPlantsJungle.remove(vector);
+            }
+        }
+        if(darwinWorld.fieldsForPlantsSavanna.size() != 0){
+            y = random.nextInt(darwinWorld.fieldsForPlantsSavanna.size());
+            Vector2d vector = darwinWorld.fieldsForPlantsSavanna.get(y);
+            Field field = darwinWorld.fields.get(vector);
+            if (field.canPlacePlant(vector)){
+                Plant plant = new Plant(vector, false);
+                field.addingPlants();
+                darwinWorld.plants.put(vector, plant);
+                darwinWorld.mapElements.add(plant);
+                darwinWorld.fieldsForPlantsSavanna.remove(vector);
+            }
+        }
+    }
+
+    public int countDay(int day){
+        return day += 1;
+    }
+
+
+    // helping methods
+    public int numberOfMagic(int magic){
+        return magic += 1;
+    }
+
+    public void sleep() throws InterruptedException {
+        while (!isRunning){
+            Thread.sleep(1000);
         }
     }
 
@@ -202,7 +186,6 @@ public class CreatingWorld implements Runnable, IMapObserver{
         }
         darwinWorld.mapElements.remove(animal);
         darwinWorld.deadAnimals.add(animal);
-        System.out.println("dead animal removed");
         animal.removeObserver(darwinWorld);
     }
 
@@ -217,8 +200,8 @@ public class CreatingWorld implements Runnable, IMapObserver{
         }
     }
 
-    public void isSomethingThere(Field field) {         // getting position and checking if and what is there
-        if (field.isPlantGrown && !field.animals.isEmpty()) {    // there are animals and plant
+    public void isSomethingThere(Field field) {                    // getting position and checking if and what is there
+        if (field.isPlantGrown && !field.animals.isEmpty()) {        // there are animals and plant
             eatPlant(inputParameters.plantKcal, field, field.fieldAddress);
             if (field.animals.size() > 1) {
                 Animal mother = field.animals.poll();
@@ -246,7 +229,6 @@ public class CreatingWorld implements Runnable, IMapObserver{
         field.addingAnimals(father);
         field.addingAnimals(child);
         field.addingAnimals(mother);
-        System.out.println("new baby has born!");
     }
 
     public void eatPlant(int plantKcal, Field field, Vector2d position){
@@ -258,21 +240,6 @@ public class CreatingWorld implements Runnable, IMapObserver{
             animal.eatingPlant(kcalForAnimal);
         }
         removingEatenPlant(plant, field);
-        System.out.println("plant was eaten");
-    }
-
-    public void movingAnimals(){
-        if (isLeftMap){
-            for (Animal animal : animals){
-                animal.move(animal.getGenotype().getIntGenotype(), true);
-                animal.loseEnergy();
-            }
-        }else {
-            for (Animal animal : animals) {
-                animal.move(animal.getGenotype().getIntGenotype(), false);
-                animal.loseEnergy();
-            }
-        }
     }
 
     private ArrayList<Animal> calculateAnimalsToEatPlant(Field field){
@@ -292,8 +259,20 @@ public class CreatingWorld implements Runnable, IMapObserver{
     }
 
 
-    @Override
-    public void updateHBox(World world, Boolean isLeft) throws Exception {
+    // update
+    public void update(){
+        observers.forEach(observer -> {
+            try {
+                observer.updateHBox(this.darwinWorld, isLeftMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
     }
+
+    @Override
+    public void updateHBox(World world, Boolean isLeft) throws Exception {
+    }
+
 }

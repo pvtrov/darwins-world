@@ -7,7 +7,6 @@ import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.chart.LineChart;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -20,17 +19,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import agh.ics.oop.InputParameters;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-
-// PRZED ODDANIEM:
-// todo sprawdzic czy nie ma komentarzy nie potrzenych
-// todo uładnic komentarze
-// todo dodać wyjatki
-// todo dodac tetsy ze 2
-// todo sprawdzic prywatnosci w klasach
 
 public class App extends Application implements IMapObserver{
     ImageStorage images = new ImageStorage();
@@ -38,16 +29,10 @@ public class App extends Application implements IMapObserver{
     VBox leftVboxCharts;
     VBox rightVboxMaps;
     VBox rightVboxCharts;
-    private HBox mainHbox = new HBox();
+    private final HBox mainHBox = new HBox();
     private InputParameters inputParameters;
-    private GridPane gridPaneLeft;
-    private GridPane gridPaneRight;
-    private WorldMap map;
-    private World world ;
-    private Stage stage;
     private CreatingWorld engineLeft;
     private CreatingWorld engineRight;
-    private Object MapDrawings;
     private int widthWorld;
     private int heightWorld;
     private int initialNumberOfAnimals;
@@ -59,19 +44,27 @@ public class App extends Application implements IMapObserver{
     private boolean rightMagic;
     private boolean isLeftAnimalTracked = false;
     private boolean isRightAnimalTracked = false;
-    private boolean makeLeft;
     private Animal trackedLeftAnimal;
     private Animal trackedRightAnimal;
+    private final LineCharts animals = new LineCharts("Animals");
+    private final LineCharts plants = new LineCharts("Plants");
+    private final LineCharts energy = new LineCharts("Energy");
+    private final LineCharts kids = new LineCharts("Kids");
+    private final LineCharts animalsR = new LineCharts("Animals");
+    private final LineCharts plantsR = new LineCharts("Plants");
+    private final LineCharts energyR = new LineCharts("Energy");
+    private final LineCharts kidsR = new LineCharts("Kids");
 
-    public App() throws FileNotFoundException {
-    }
+
+    // start program
+    public App() throws FileNotFoundException {}
 
     public static void main(String[] args){
         Application.launch(App.class);
     }
 
     public void start(Stage primaryStage) throws Exception {
-        Scene scene = new Scene(mainHbox, 1800, 900);
+        Scene scene = new Scene(mainHBox, 1800, 950);
         scene.setFill(Color.web("DB6B97"));
         primaryStage.setScene(scene);
         primaryStage.setTitle("Darwin's World simulation");
@@ -89,152 +82,6 @@ public class App extends Application implements IMapObserver{
             System.exit(0);
         }));
         primaryStage.show();
-    }
-
-
-    @Override
-    public void updateHBox(World world, Boolean isLeft) throws Exception {
-        Platform.runLater(() -> {
-            if (isLeft){
-                Button leftStop = new Button("stop");
-                leftStop.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
-                Button leftStart = new Button("start");
-                leftStart.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
-                Button stopTracking = new Button("stop tracking");
-                stopTracking.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
-                HBox buttons = new HBox(15, leftStart, leftStop, stopTracking);
-                buttons.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
-                buttons.setAlignment(Pos.CENTER);
-
-
-                stopTracking.setOnAction((event -> {
-                    isLeftAnimalTracked = false;
-                }));
-
-                leftStop.setOnAction((event -> {
-                    engineLeft.isRunning = false;
-                }));
-
-                leftStart.setOnAction((event -> {
-                    engineLeft.isRunning = true;
-                }));
-
-                leftVboxCharts.getChildren().clear();
-                leftVboxMaps.getChildren().clear();
-                try {
-                    leftVboxMaps.getChildren().add(createMapDrawing(world, true));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (isLeftAnimalTracked ){
-                    VBox leftTracking = Statistics.giveMeAnimalStatistics(trackedLeftAnimal);
-                    leftVboxMaps.getChildren().add(Statistics.giveMeStatistics(world, inputParameters.magicLeft));
-                    leftVboxMaps.getChildren().add(buttons);
-                    leftVboxCharts.getChildren().add(leftTracking);
-                    leftVboxMaps.setSpacing(20);
-                }else{
-                    leftVboxMaps.getChildren().add(Statistics.giveMeStatistics(world, inputParameters.magicLeft));
-                    leftVboxMaps.getChildren().add(buttons);
-                    leftVboxMaps.setSpacing(20);
-                }
-
-
-            }else{
-                Button rightStop = new Button("stop");
-                rightStop.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
-                Button rightStart = new Button("start");
-                rightStart.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
-                Button stopTracking = new Button("stop tracking");
-                stopTracking.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
-
-                HBox buttons = new HBox(15, rightStart, rightStop, stopTracking);
-                buttons.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
-                buttons.setAlignment(Pos.CENTER);
-
-
-                stopTracking.setOnAction((event -> {
-                    isRightAnimalTracked = false;
-                }));
-
-                rightStop.setOnAction((event -> {
-                    engineRight.isRunning = false;
-                }));
-                rightStart.setOnAction((event -> {
-                    engineRight.isRunning = true;
-                }));
-
-                rightVboxCharts.getChildren().clear();
-                rightVboxMaps.getChildren().clear();
-                try {
-                    rightVboxMaps.getChildren().add(createMapDrawing(world, false));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                if (isRightAnimalTracked){
-                    VBox rightTracking = Statistics.giveMeAnimalStatistics(trackedRightAnimal);
-                    rightVboxMaps.getChildren().add(Statistics.giveMeStatistics(world, inputParameters.magicRight));
-                    rightVboxMaps.getChildren().add(buttons);
-                    rightVboxCharts.getChildren().add(rightTracking);
-                    rightVboxMaps.setSpacing(20);
-                }else{
-                    rightVboxMaps.getChildren().add(Statistics.giveMeStatistics(world, inputParameters.magicRight));
-                    rightVboxMaps.getChildren().add(buttons);
-                    rightVboxMaps.setSpacing(20);
-                }
-            }
-        });
-    }
-
-
-    public void makeMeTheWorld(InputParameters inputParameters) throws Exception {
-        int moveDelay = 500;
-        World leftWorld = new World(inputParameters, true);
-        World rightWorld = new World(inputParameters, false);
-
-        engineLeft = new CreatingWorld(leftWorld, moveDelay, this, true, inputParameters.magicLeft);
-        engineRight = new CreatingWorld(rightWorld, moveDelay, this, false, inputParameters.magicRight);
-
-        gridPaneLeft = createMapDrawing(engineLeft.darwinWorld, true);
-        gridPaneLeft.setPrefSize(500, 500);
-
-        gridPaneRight = createMapDrawing(engineRight.darwinWorld, false);
-        gridPaneRight.setPrefSize(500, 500);
-
-
-        rightVboxMaps = new VBox(gridPaneRight, Statistics.giveMeStatistics(engineRight.darwinWorld, inputParameters.magicRight));
-        rightVboxMaps.setSpacing(20);
-        rightVboxMaps.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
-        rightVboxCharts = new VBox();
-        rightVboxCharts.setPrefSize(300, 800);
-        rightVboxCharts.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
-
-        leftVboxMaps = new VBox(gridPaneLeft, Statistics.giveMeStatistics(engineLeft.darwinWorld, inputParameters.magicLeft));
-        leftVboxMaps.setSpacing(20);
-        leftVboxMaps.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
-        leftVboxCharts = new VBox();
-        leftVboxCharts.setPrefSize(300, 800);
-        leftVboxCharts.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
-
-        // todo zrobic vboxy z wykresami jak juz zrobie wykresy
-        Thread engineLeftThread = new Thread(engineLeft);
-        Thread engineRightThread = new Thread(engineRight);
-
-        mainHbox.getChildren().clear();
-        mainHbox.getChildren().add(new HBox(leftVboxCharts, leftVboxMaps));
-        mainHbox.getChildren().add(new HBox(rightVboxCharts, rightVboxMaps));
-
-        engineLeftThread.start();
-        engineRightThread.start();
-    }
-
-
-    public void showInitForm(){
-        GridPane initForm = prepareInitForm();
-        mainHbox.getChildren().clear();
-        mainHbox.getChildren().add(initForm);
-        mainHbox.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
     @Override
@@ -260,9 +107,9 @@ public class App extends Application implements IMapObserver{
         gameStart.setSpacing(50);
         gameStart.setAlignment(Pos.CENTER);
 
-        mainHbox.getChildren().clear();
-        mainHbox.getChildren().add(gameStart);
-        mainHbox.setAlignment(Pos.CENTER);
+        mainHBox.getChildren().clear();
+        mainHBox.getChildren().add(gameStart);
+        mainHBox.setAlignment(Pos.CENTER);
 
     }
 
@@ -414,6 +261,59 @@ public class App extends Application implements IMapObserver{
         return inputDataTaker;
     }
 
+    public void showInitForm(){
+        GridPane initForm = prepareInitForm();
+        mainHBox.getChildren().clear();
+        mainHBox.getChildren().add(initForm);
+        mainHBox.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
+    }
+
+    public void makeMeTheWorld(InputParameters inputParameters) throws Exception {
+        int moveDelay = 500;
+        World leftWorld = new World(inputParameters, true);
+        World rightWorld = new World(inputParameters, false);
+
+        engineLeft = new CreatingWorld(leftWorld, moveDelay, this, true, inputParameters.magicLeft);
+        engineRight = new CreatingWorld(rightWorld, moveDelay, this, false, inputParameters.magicRight);
+
+        GridPane gridPaneLeft = createMapDrawing(engineLeft.darwinWorld, true);
+        gridPaneLeft.setPrefSize(500, 500);
+
+        GridPane gridPaneRight = createMapDrawing(engineRight.darwinWorld, false);
+        gridPaneRight.setPrefSize(500, 500);
+
+
+        rightVboxMaps = new VBox(gridPaneRight, Statistics.giveMeStatistics(engineRight.darwinWorld, inputParameters.magicRight));
+        rightVboxMaps.setSpacing(20);
+        rightVboxMaps.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        rightVboxCharts = new VBox(animalsR.makeMeChart(), plantsR.makeMeChart(), energyR.makeMeChart(), kidsR.makeMeChart());
+        rightVboxCharts.setPrefSize(300, 800);
+        rightVboxCharts.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
+        rightVboxCharts.setSpacing(10);
+
+
+        leftVboxMaps = new VBox(gridPaneLeft, Statistics.giveMeStatistics(engineLeft.darwinWorld, inputParameters.magicLeft));
+        leftVboxMaps.setSpacing(20);
+        leftVboxMaps.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+
+        leftVboxCharts = new VBox(animals.makeMeChart(), plants.makeMeChart(), energy.makeMeChart(), kids.makeMeChart());
+        leftVboxCharts.setSpacing(10);
+        leftVboxCharts.setPrefSize(300, 800);
+        leftVboxCharts.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+
+        Thread engineLeftThread = new Thread(engineLeft);
+        Thread engineRightThread = new Thread(engineRight);
+
+        mainHBox.getChildren().clear();
+        mainHBox.getChildren().add(new HBox(leftVboxCharts, leftVboxMaps));
+        mainHBox.getChildren().add(new HBox(rightVboxCharts, rightVboxMaps));
+
+        engineLeftThread.start();
+        engineRightThread.start();
+    }
 
     private GridPane createMapDrawing(World world, Boolean isLeft) throws Exception {
         GridPane gridPane = new GridPane();
@@ -488,12 +388,16 @@ public class App extends Application implements IMapObserver{
         int allEnergy = inputParameters.startAnimalEnergy;
         Image imageToColor = images.animalImage;
         ImageView imageViewToColor = new ImageView(imageToColor);
+
         ColorAdjust effect0_25 = new ColorAdjust();
         effect0_25.setContrast(-0.5);
+
         ColorAdjust effect25_50 = new ColorAdjust();
         effect25_50.setContrast(0.0);
+
         ColorAdjust effect50_75 = new ColorAdjust();
         effect50_75.setContrast(0.5);
+
         ColorAdjust effect75_100 = new ColorAdjust();
         effect75_100.setContrast(1.0);
 
@@ -511,4 +415,126 @@ public class App extends Application implements IMapObserver{
             return imageViewToColor;
         }
     }
+
+    @Override
+    public void updateHBox(World world, Boolean isLeft) throws Exception {
+        Platform.runLater(() -> {
+            if (isLeft){
+                Button leftStop = new Button("stop");
+                leftStop.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
+                Button leftStart = new Button("start");
+                leftStart.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
+                Button stopTracking = new Button("stop tracking");
+                stopTracking.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
+                HBox buttons = new HBox(15, leftStart, leftStop, stopTracking);
+                buttons.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
+                buttons.setAlignment(Pos.CENTER);
+
+
+                stopTracking.setOnAction((event -> {
+                    isLeftAnimalTracked = false;
+                }));
+
+                leftStop.setOnAction((event -> {
+                    engineLeft.isRunning = false;
+                }));
+
+                leftStart.setOnAction((event -> {
+                    engineLeft.isRunning = true;
+                }));
+
+                animals.updateAnimals(engineLeft.darwinWorld);
+                plants.updatePlants(engineLeft.darwinWorld);
+                energy.updateEnergy(engineLeft.darwinWorld);
+                kids.updateKids(engineLeft.darwinWorld);
+
+                leftVboxCharts.getChildren().clear();
+                leftVboxMaps.getChildren().clear();
+                try {
+                    leftVboxMaps.getChildren().add(createMapDrawing(world, true));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (isLeftAnimalTracked ){
+                    VBox leftTracking = Statistics.giveMeAnimalStatistics(trackedLeftAnimal);
+                    leftVboxMaps.getChildren().add(Statistics.giveMeStatistics(world, inputParameters.magicLeft));
+                    leftVboxMaps.getChildren().add(buttons);
+                    leftVboxCharts.getChildren().add(animals.makeMeChart());
+                    leftVboxCharts.getChildren().add(plants.makeMeChart());
+                    leftVboxCharts.getChildren().add(energy.makeMeChart());
+                    leftVboxCharts.getChildren().add(kids.makeMeChart());
+                    leftVboxCharts.getChildren().add(leftTracking);
+                    leftVboxMaps.setSpacing(20);
+                }else{
+                    leftVboxMaps.getChildren().add(Statistics.giveMeStatistics(world, inputParameters.magicLeft));
+                    leftVboxMaps.getChildren().add(buttons);
+                    leftVboxCharts.getChildren().add(animals.makeMeChart());
+                    leftVboxCharts.getChildren().add(plants.makeMeChart());
+                    leftVboxCharts.getChildren().add(energy.makeMeChart());
+                    leftVboxCharts.getChildren().add(kids.makeMeChart());
+                    leftVboxMaps.setSpacing(20);
+                }
+
+
+            }else{
+                Button rightStop = new Button("stop");
+                rightStop.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
+                Button rightStart = new Button("start");
+                rightStart.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
+                Button stopTracking = new Button("stop tracking");
+                stopTracking.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+                HBox buttons = new HBox(15, rightStart, rightStop, stopTracking);
+                buttons.setBackground(new Background(new BackgroundFill(Color.web("DB6B97"), CornerRadii.EMPTY, Insets.EMPTY)));
+                buttons.setAlignment(Pos.CENTER);
+
+
+                stopTracking.setOnAction((event -> {
+                    isRightAnimalTracked = false;
+                }));
+
+                rightStop.setOnAction((event -> {
+                    engineRight.isRunning = false;
+                }));
+                rightStart.setOnAction((event -> {
+                    engineRight.isRunning = true;
+                }));
+
+                animalsR.updateAnimals(engineRight.darwinWorld);
+                plantsR.updatePlants(engineRight.darwinWorld);
+                energyR.updateEnergy(engineRight.darwinWorld);
+                kidsR.updateKids(engineRight.darwinWorld);
+
+                rightVboxMaps.getChildren().clear();
+                rightVboxCharts.getChildren().clear();
+                try {
+                    rightVboxMaps.getChildren().add(createMapDrawing(world, false));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (isRightAnimalTracked){
+                    VBox rightTracking = Statistics.giveMeAnimalStatistics(trackedRightAnimal);
+                    rightVboxMaps.getChildren().add(Statistics.giveMeStatistics(world, inputParameters.magicRight));
+                    rightVboxMaps.getChildren().add(buttons);
+                    rightVboxCharts.getChildren().add(animalsR.makeMeChart());
+                    rightVboxCharts.getChildren().add(plantsR.makeMeChart());
+                    rightVboxCharts.getChildren().add(energyR.makeMeChart());
+                    rightVboxCharts.getChildren().add(kidsR.makeMeChart());
+                    rightVboxCharts.getChildren().add(rightTracking);
+                    rightVboxMaps.setSpacing(20);
+                }else{
+                    rightVboxMaps.getChildren().add(Statistics.giveMeStatistics(world, inputParameters.magicRight));
+                    rightVboxMaps.getChildren().add(buttons);
+                    rightVboxCharts.getChildren().add(animalsR.makeMeChart());
+                    rightVboxCharts.getChildren().add(plantsR.makeMeChart());
+                    rightVboxCharts.getChildren().add(energyR.makeMeChart());
+                    rightVboxCharts.getChildren().add(kidsR.makeMeChart());
+                    rightVboxMaps.setSpacing(20);
+                }
+            }
+        });
+    }
+
 }

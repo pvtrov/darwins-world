@@ -1,14 +1,12 @@
 package agh.ics.oop;
 
-
 import agh.ics.oop.gui.SaveFile;
-
 import java.io.IOException;
 import java.util.*;
 
 public class World implements IPositionChangeObserver {
     public InputParameters inputParameters;
-    public boolean isLeft;
+    private boolean isLeft;
     Random random = new Random();
     public ArrayList<IMapElement> mapElements = new ArrayList<>();
     public ArrayList<Animal> animals = new ArrayList<>();
@@ -30,6 +28,7 @@ public class World implements IPositionChangeObserver {
     public int allLifeTime = 0;
 
 
+    // constructor
     public World(InputParameters inputParameters, Boolean isLeft) throws IOException {
         this.isLeft = isLeft;
         this.inputParameters = inputParameters;
@@ -39,14 +38,7 @@ public class World implements IPositionChangeObserver {
         this.placingAdamAndEva();
     }
 
-    public World() throws IOException {
-    }
-
-    public ArrayList<IMapElement> getMapElements(){
-        return mapElements;
-    }
-
-
+    // methods for creating the world
     public void makingFieldsArrays(){
         fields = new HashMap<>( inputParameters.heightWorld * inputParameters.widthWorld);
         Vector2d jungleLowerLeft = map.jungleCountingLowerLeft();
@@ -115,6 +107,7 @@ public class World implements IPositionChangeObserver {
         }
     }
 
+    // methods operating living in the world
     public void addKidToSum(){
         sumOfNumberOfKids += 1;
     }
@@ -127,6 +120,7 @@ public class World implements IPositionChangeObserver {
         this.day += 1;
     }
 
+    // update
     public void updateStatistics() throws IOException {
         allAnimals += getNumberOfLivingAnimals();
         allPlants += getNumberOfPlants();
@@ -206,7 +200,6 @@ public class World implements IPositionChangeObserver {
         return magic;
     }
 
-
     // observers
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
@@ -222,4 +215,5 @@ public class World implements IPositionChangeObserver {
         Field fieldToAdd = fields.get(newPosition);
         fieldToAdd.animals.add(movedAnimal);
     }
+
 }

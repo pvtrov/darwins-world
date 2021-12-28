@@ -6,6 +6,7 @@ import java.util.Random;
 public class DNA {
     public int[] genotype;
 
+    // constructors
     public DNA(Animal firstParent, Animal secondParent) {
         this.genotype = makingNewBabyGenes(firstParent, secondParent);
     }
@@ -14,10 +15,14 @@ public class DNA {
         this.genotype = makingFirstGenes();
     }
 
+
+    // getters
     public int[] getIntGenotype(){
         return this.genotype;
     }
 
+
+    // methods for new genotypes
     public int[] makingFirstGenes(){
         Random random = new Random();
         int[] tempGenotype = new int[32];
@@ -75,4 +80,5 @@ public class DNA {
         Arrays.sort(tempGenotype);
         return tempGenotype;
     }
+
 }

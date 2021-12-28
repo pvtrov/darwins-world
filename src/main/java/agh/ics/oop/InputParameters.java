@@ -1,10 +1,5 @@
 package agh.ics.oop;
 
-import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 
 public class InputParameters {
     public int heightWorld;
@@ -14,13 +9,16 @@ public class InputParameters {
     public int initialNumberOfPlants;
     public int moveAnimalEnergy ;
     public int plantKcal;
-    public int jungleRatioo;  // pobieram w procentach
+    public int jungleRatioo;
     public int jungleHeight;
     public int jungleWidth;
     public boolean magicLeft;
     public boolean magicRight;
+    int allFields; int jungleFields;
 
 
+
+    // constructors
     public InputParameters(int widthWorld, int heightWorld, int initialNumberOfAnimals, int startAnimalEnergy, int moveAnimalEnergy, int plantKcal, int jungleRatioo, boolean magicLeft, boolean magicRight){
         this.heightWorld = heightWorld;
         this.widthWorld = widthWorld;
@@ -39,6 +37,7 @@ public class InputParameters {
     public InputParameters() {
     }
 
+    // getters
     public int getHeightWorld(){
         return this.heightWorld;
     }
@@ -47,28 +46,12 @@ public class InputParameters {
         return this.widthWorld;
     }
 
-    public int getStartEnergy(){
-        return this.startAnimalEnergy;
-    }
-
     public int getInitialNumberOfAnimals(){
         return initialNumberOfAnimals;
     }
 
-    public int getInitialNumberOfPlants(){
-        return initialNumberOfPlants;
-    }
-
-    public int getMoveAnimalEnergy(){
-        return this.moveAnimalEnergy;
-    }
-
     public int getPlantKcal(){
         return this.plantKcal;
-    }
-
-    public int getJungleRatioo(){
-        return this.jungleRatioo;
     }
 
     public int getJungleHeight(){
@@ -80,13 +63,13 @@ public class InputParameters {
         return (jungleRatioo *allFields/100) / jungleHeight;
     }
 
-    int allFields; int jungleFields;
-    // oblicznie jungli
+    // counting jungle parameters
     public int jungleCounting(){
-        allFields = this.heightWorld * this.widthWorld;  // b, a
-        jungleFields = this.jungleRatioo *allFields/100;  // A
+        allFields = this.heightWorld * this.widthWorld;
+        jungleFields = this.jungleRatioo *allFields/100;
         jungleHeight = (int) Math.sqrt(jungleFields* this.heightWorld / this.widthWorld);
         return jungleHeight;
     }
+
 }
 

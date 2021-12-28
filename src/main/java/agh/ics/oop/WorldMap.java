@@ -1,40 +1,18 @@
 package agh.ics.oop;
 
+
 public class WorldMap extends InputParameters{
     int width;
     int height;
     int jungleWidth;
     int jungleHeight;
 
+
     public WorldMap(int width, int height, int jungleHeight, int jungleWidth){
         this.width = width;
         this.height = height;
         this.jungleHeight = jungleHeight;
         this.jungleWidth = jungleWidth;
-    }
-
-    public Vector2d getMapUpperRight(){
-        return new Vector2d(width-1, height-1);
-    }
-
-    public int getJungleFirstX(){
-        Vector2d lowerLeft = jungleCountingLowerLeft();
-        return lowerLeft.x;
-    }
-
-    public int getJungleFirstY(){
-        Vector2d lowerLeft = jungleCountingLowerLeft();
-        return lowerLeft.y;
-    }
-
-    public int getJungleSecondX(){
-        Vector2d upperRight = jungleCountingUpperRight();
-        return upperRight.x;
-    }
-
-    public int getJungleSecondY() {
-        Vector2d upperRight = jungleCountingUpperRight();
-        return upperRight.y;
     }
 
     // counting where jungle should be
@@ -55,4 +33,5 @@ public class WorldMap extends InputParameters{
 
         return new Vector2d(middleXmap+halfOfJungleX, middleYmap+halfOfJungleY);
     }
+
 }

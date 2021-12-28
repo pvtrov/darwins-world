@@ -26,5 +26,4 @@ public interface IWorldMap {
      *
      * @return True if nothing is on this position
      */
-    boolean isOccupied(Vector2d position);
 }

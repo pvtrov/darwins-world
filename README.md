@@ -1,6 +1,6 @@
 # Darwins-World
 
-Do you wanna create your own world, full of sweet jaguars which feed on sunflowers instead of meat? If so, click on the bomb and blow whole Universe!
+Do you wanna create your own world, full of sweet jaguars which are fen with sunflowers instead of meat? If so, click on the bomb and blow whole Universe!
 
 ![This is an image](https://github.com/pvtrov/resources/blob/main/start.png)
 

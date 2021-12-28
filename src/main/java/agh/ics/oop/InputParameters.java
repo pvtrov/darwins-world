@@ -15,11 +15,12 @@ public class InputParameters {
     public boolean magicLeft;
     public boolean magicRight;
     int allFields; int jungleFields;
+    public int moveDelay;
 
 
 
     // constructors
-    public InputParameters(int widthWorld, int heightWorld, int initialNumberOfAnimals, int startAnimalEnergy, int moveAnimalEnergy, int plantKcal, int jungleRatioo, boolean magicLeft, boolean magicRight){
+    public InputParameters(int widthWorld, int heightWorld, int initialNumberOfAnimals, int startAnimalEnergy, int moveAnimalEnergy, int plantKcal, int jungleRatioo, boolean magicLeft, boolean magicRight, int moveDelay){
         this.heightWorld = heightWorld;
         this.widthWorld = widthWorld;
         this.startAnimalEnergy = startAnimalEnergy;
@@ -32,6 +33,7 @@ public class InputParameters {
         this.initialNumberOfPlants = 0;
         this.magicLeft = magicLeft;
         this.magicRight = magicRight;
+        this.moveDelay = moveDelay;
     }
 
     public InputParameters() {

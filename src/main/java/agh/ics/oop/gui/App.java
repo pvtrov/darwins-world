@@ -39,6 +39,7 @@ public class App extends Application implements IMapObserver{
     private int startAnimalEnergy;
     private int moveAnimalEnergy;
     private int plantKcal;
+    private int moveDelay;
     private int jungleRatioo;
     private boolean leftMagic;
     private boolean rightMagic;
@@ -155,7 +156,7 @@ public class App extends Application implements IMapObserver{
         inputDataTaker.getChildren().add(animal);
         inputDataTaker.getChildren().add(initialAnimal);
 
-        Label startEnergyLabel = new Label("Give me start energy of Adam and Eve: ");
+        Label startEnergyLabel = new Label("Give me points of start energy for your first animals: ");
         startEnergyLabel.setFont(new Font("Verdana", 20));
         TextField startEnergy = new TextField();
         startEnergy.setPromptText("+int only");
@@ -166,7 +167,7 @@ public class App extends Application implements IMapObserver{
         inputDataTaker.getChildren().add(startEnergy);
         inputDataTaker.getChildren().add(startEnergyLabel);
 
-        Label moveEnergyLabel = new Label("Give me energy that each animal will lose everyday: ");
+        Label moveEnergyLabel = new Label("Give me number of energy points that each animal will lose everyday: ");
         moveEnergyLabel.setFont(new Font("Verdana", 20));
         TextField moveEnergy = new TextField();
         moveEnergy.setPromptText("+int only");
@@ -177,7 +178,7 @@ public class App extends Application implements IMapObserver{
         inputDataTaker.getChildren().add(moveEnergy);
         inputDataTaker.getChildren().add(moveEnergyLabel);
 
-        Label plantEnergyLabel = new Label("How many kcal each plant have? ");
+        Label plantEnergyLabel = new Label("How many energy point each plant has? ");
         plantEnergyLabel.setFont(new Font("Verdana", 20));
         TextField plantEnergy = new TextField();
         plantEnergy.setPromptText("+int only");
@@ -188,14 +189,25 @@ public class App extends Application implements IMapObserver{
         inputDataTaker.getChildren().add(plantEnergy);
         inputDataTaker.getChildren().add(plantEnergyLabel);
 
+        Label moveDelayLabel = new Label("How fast your world should be? ");
+        moveDelayLabel.setFont(new Font("Verdana", 20));
+        TextField moveDelayText = new TextField();
+        moveDelayText.setPromptText("+int only, over 250 is recommended");
+        moveDelayText.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
+        moveDelayText.setPrefColumnCount(20);
+        GridPane.setConstraints(moveDelayLabel, 0, 6);
+        GridPane.setConstraints(moveDelayText, 1, 6);
+        inputDataTaker.getChildren().add(moveDelayLabel);
+        inputDataTaker.getChildren().add(moveDelayText);
+
         Label jungleRatioLabel = new Label("Give me percent of jungle size: ");
         jungleRatioLabel.setFont(new Font("Verdana", 20));
         TextField jungleRatio = new TextField();
         jungleRatio.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
         jungleRatio.setPromptText("+int only");
         jungleRatio.setPrefColumnCount(20);
-        GridPane.setConstraints(jungleRatioLabel, 0, 6);
-        GridPane.setConstraints(jungleRatio, 1, 6);
+        GridPane.setConstraints(jungleRatioLabel, 0, 7);
+        GridPane.setConstraints(jungleRatio, 1, 7);
         inputDataTaker.getChildren().add(jungleRatio);
         inputDataTaker.getChildren().add(jungleRatioLabel);
 
@@ -207,8 +219,8 @@ public class App extends Application implements IMapObserver{
         leftMap.getItems().add("Normal");
         leftMap.getItems().add("Magic");
         leftMap.getSelectionModel().selectFirst();
-        GridPane.setConstraints(leftMagicLabel, 0, 7);
-        GridPane.setConstraints(leftMap, 1, 7);
+        GridPane.setConstraints(leftMagicLabel, 0, 8);
+        GridPane.setConstraints(leftMap, 1, 8);
         inputDataTaker.getChildren().add(leftMagicLabel);
         inputDataTaker.getChildren().add(leftMap);
 
@@ -220,15 +232,15 @@ public class App extends Application implements IMapObserver{
         rightMap.getItems().add("Normal");
         rightMap.getItems().add("Magic");
         rightMap.getSelectionModel().selectFirst();
-        GridPane.setConstraints(rightMagicLabel, 0, 8);
-        GridPane.setConstraints(rightMap, 1, 8);
+        GridPane.setConstraints(rightMagicLabel, 0, 9);
+        GridPane.setConstraints(rightMap, 1, 9);
         inputDataTaker.getChildren().add(rightMagicLabel);
         inputDataTaker.getChildren().add(rightMap);
 
         Button submitButton = new Button("Let's begin!");
         submitButton.setPrefSize(100, 20);
         submitButton.setBackground(new Background(new BackgroundFill(Color.web("FED1EF"), CornerRadii.EMPTY, Insets.EMPTY)));
-        GridPane.setConstraints(submitButton, 1, 9);
+        GridPane.setConstraints(submitButton, 1, 10);
         inputDataTaker.getChildren().add(submitButton);
 
         submitButton.setOnAction((event -> {
@@ -239,6 +251,7 @@ public class App extends Application implements IMapObserver{
             plantKcal  = Integer.parseInt(plantEnergy.getText());
             jungleRatioo = Integer.parseInt(jungleRatio.getText());
             initialNumberOfAnimals = Integer.parseInt(animal.getText());
+            moveDelay = Integer.parseInt(moveDelayText.getText());
 
 
             if (leftMap.getValue() == "Magic"){
@@ -248,7 +261,7 @@ public class App extends Application implements IMapObserver{
                 rightMagic = true;
             }else rightMagic = false;
 
-            inputParameters = new InputParameters(widthWorld, heightWorld, initialNumberOfAnimals, startAnimalEnergy, moveAnimalEnergy, plantKcal, jungleRatioo, leftMagic, rightMagic);
+            inputParameters = new InputParameters(widthWorld, heightWorld, initialNumberOfAnimals, startAnimalEnergy, moveAnimalEnergy, plantKcal, jungleRatioo, leftMagic, rightMagic, moveDelay);
 
             try {
                 makeMeTheWorld(inputParameters);
@@ -269,12 +282,11 @@ public class App extends Application implements IMapObserver{
     }
 
     public void makeMeTheWorld(InputParameters inputParameters) throws Exception {
-        int moveDelay = 500;
         World leftWorld = new World(inputParameters, true);
         World rightWorld = new World(inputParameters, false);
 
-        engineLeft = new CreatingWorld(leftWorld, moveDelay, this, true, inputParameters.magicLeft);
-        engineRight = new CreatingWorld(rightWorld, moveDelay, this, false, inputParameters.magicRight);
+        engineLeft = new CreatingWorld(leftWorld, inputParameters.moveDelay, this, true, inputParameters.magicLeft);
+        engineRight = new CreatingWorld(rightWorld, inputParameters.moveDelay, this, false, inputParameters.magicRight);
 
         GridPane gridPaneLeft = createMapDrawing(engineLeft.darwinWorld, true);
         gridPaneLeft.setPrefSize(500, 500);

@@ -19,7 +19,7 @@ public class LineCharts {
         series = new XYChart.Series();
 
         chart.setTitle(string);
-        chart.setCreateSymbols(false);
+        chart.setCreateSymbols(true);
         chart.getData().add(series);
     }
 

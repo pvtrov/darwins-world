@@ -56,8 +56,8 @@ public class SaveFile {
     }
 
     private String prepareLine(int day, int animals, int grass, int energy, int kids, int lifeTime){
-        String s = Integer.toString(day) + " " + Integer.toString(animals) + " " + Integer.toString(grass) + " " +
-                Integer.toString(energy) + " " + Integer.toString(kids) + " " + Integer.toString(lifeTime);
+        String s = Integer.toString(day) + "       " + Integer.toString(animals) + "        " + Integer.toString(grass) + "     " +
+                Integer.toString(energy) + "       " + Integer.toString(kids) + "       " + Integer.toString(lifeTime);
         return s;
     }
 
